@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\2fc321852b35c488d7be6282c9defe2f\bint-x64-win.obj.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\mcl\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj">
+      <Filter>Object Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{653C401D-168B-3E26-B828-48746B85C492}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{FBAE921F-5FAE-3BB9-BEA2-A9805836431E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

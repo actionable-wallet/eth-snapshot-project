@@ -1,0 +1,9 @@
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/mcl.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/mcl_st.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/gen_bint-x64-win.obj.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/mclbn256.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/mclbn384.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/mclbn384_256.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/INSTALL.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/ZERO_CHECK.dir

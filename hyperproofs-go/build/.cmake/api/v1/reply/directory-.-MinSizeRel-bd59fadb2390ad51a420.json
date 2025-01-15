@@ -1,0 +1,217 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 273,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 279,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 287,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 291,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/MinSizeRel/mcl.lib"
+			],
+			"targetId" : "mcl::@6890427a1f51a3e7e1df",
+			"targetIndex" : 3,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"bin/MinSizeRel/mcl.dll"
+			],
+			"targetId" : "mcl::@6890427a1f51a3e7e1df",
+			"targetIndex" : 3,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/MinSizeRel/mcl.lib"
+			],
+			"targetId" : "mcl_st::@6890427a1f51a3e7e1df",
+			"targetIndex" : 4,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/MinSizeRel/mclbn256.lib"
+			],
+			"targetId" : "mclbn256::@6890427a1f51a3e7e1df",
+			"targetIndex" : 5,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"bin/MinSizeRel/mclbn256.dll"
+			],
+			"targetId" : "mclbn256::@6890427a1f51a3e7e1df",
+			"targetIndex" : 5,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/MinSizeRel/mclbn384.lib"
+			],
+			"targetId" : "mclbn384::@6890427a1f51a3e7e1df",
+			"targetIndex" : 6,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"bin/MinSizeRel/mclbn384.dll"
+			],
+			"targetId" : "mclbn384::@6890427a1f51a3e7e1df",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/MinSizeRel/mclbn384_256.lib"
+			],
+			"targetId" : "mclbn384_256::@6890427a1f51a3e7e1df",
+			"targetIndex" : 7,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"bin/MinSizeRel/mclbn384_256.dll"
+			],
+			"targetId" : "mclbn384_256::@6890427a1f51a3e7e1df",
+			"targetIndex" : 7,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"include/mcl"
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"include/cybozu"
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/mcl",
+			"exportName" : "mclTargets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "mcl::@6890427a1f51a3e7e1df",
+					"index" : 3
+				},
+				{
+					"id" : "mcl_st::@6890427a1f51a3e7e1df",
+					"index" : 4
+				},
+				{
+					"id" : "mclbn256::@6890427a1f51a3e7e1df",
+					"index" : 5
+				},
+				{
+					"id" : "mclbn384::@6890427a1f51a3e7e1df",
+					"index" : 6
+				},
+				{
+					"id" : "mclbn384_256::@6890427a1f51a3e7e1df",
+					"index" : 7
+				}
+			],
+			"paths" : 
+			[
+				"CMakeFiles/Export/941083383db8f9b1ca52c8c87b32958e/mclTargets.cmake"
+			],
+			"type" : "export"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}

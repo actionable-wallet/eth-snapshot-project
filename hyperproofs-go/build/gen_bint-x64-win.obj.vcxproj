@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{94AEF51E-7EF5-3DEB-9E08-3834117D3952}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>gen_bint-x64-win.obj</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\2fc321852b35c488d7be6282c9defe2f\bint-x64-win.obj.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating bint-x64-win.obj</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd "C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64\ml64.exe" /c /Fo "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/bint-x64-win.obj" "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/src/asm/bint-x64-win.asm"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating bint-x64-win.obj</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd "C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64\ml64.exe" /c /Fo "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/bint-x64-win.obj" "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/src/asm/bint-x64-win.asm"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating bint-x64-win.obj</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd "C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64\ml64.exe" /c /Fo "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/bint-x64-win.obj" "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/src/asm/bint-x64-win.asm"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating bint-x64-win.obj</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd "C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build"
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64\ml64.exe" /c /Fo "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/bint-x64-win.obj" "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/src/asm/bint-x64-win.asm"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\mcl\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+C:\Strawberry\c\bin\cmake.exe "-SC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl" "-BC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build" --check-stamp-file "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Strawberry\c\share\cmake-3.26\Modules\CMakeASMInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeRCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-ASM.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeASMCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCXXCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeRCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+C:\Strawberry\c\bin\cmake.exe "-SC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl" "-BC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build" --check-stamp-file "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Strawberry\c\share\cmake-3.26\Modules\CMakeASMInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeRCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-ASM.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeASMCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCXXCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeRCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+C:\Strawberry\c\bin\cmake.exe "-SC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl" "-BC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build" --check-stamp-file "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Strawberry\c\share\cmake-3.26\Modules\CMakeASMInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeRCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-ASM.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeASMCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCXXCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeRCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+C:\Strawberry\c\bin\cmake.exe "-SC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl" "-BC:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build" --check-stamp-file "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Strawberry\c\share\cmake-3.26\Modules\CMakeASMInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeRCInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-ASM.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Compiler\MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\Windows.cmake;C:\Strawberry\c\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeASMCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeCXXCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeRCCompiler.cmake;C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\3.26.4\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\bint-x64-win.obj">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\build\ZERO_CHECK.vcxproj">
+      <Project>{BB93DAA4-D5E7-3537-875B-6908C225E65C}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

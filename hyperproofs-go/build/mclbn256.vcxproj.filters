@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\mcl\src\bn_c256.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\parti\summer_projects\ToR\Vector Commitment\rollup_project\hyperproofs-go\mcl\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2698F039-4ADF-3729-82D2-DABC1B6FECAE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

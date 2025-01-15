@@ -1,0 +1,448 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f53bbbf842d2fc607e52.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mcl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Debug-4cb0a96ab001a430fc5c.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Debug-a37f8bf7dfc7f5674a62.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gen_bint-x64-win.obj::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gen_bint-x64-win.obj-Debug-98efa9071a28e52b447c.json",
+					"name" : "gen_bint-x64-win.obj",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl-Debug-70b2c89cd7e204834ffc.json",
+					"name" : "mcl",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl_st::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl_st-Debug-e88814185a8de3311349.json",
+					"name" : "mcl_st",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn256-Debug-8137eaee50648f7a666f.json",
+					"name" : "mclbn256",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384-Debug-9d2e1097f91a00158006.json",
+					"name" : "mclbn384",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384_256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384_256-Debug-1f2a6d100d5f657b2a6f.json",
+					"name" : "mclbn384_256",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-97006345f3db0655b3d9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mcl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-Release-4cb0a96ab001a430fc5c.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-Release-a37f8bf7dfc7f5674a62.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gen_bint-x64-win.obj::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gen_bint-x64-win.obj-Release-98efa9071a28e52b447c.json",
+					"name" : "gen_bint-x64-win.obj",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl-Release-9b97b6c21a47b88e533f.json",
+					"name" : "mcl",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl_st::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl_st-Release-7bb7056570dbc5bd50ec.json",
+					"name" : "mcl_st",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn256-Release-8e6fe7c78c4c1b7129f3.json",
+					"name" : "mclbn256",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384-Release-5b2ef8e01b5e92397498.json",
+					"name" : "mclbn384",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384_256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384_256-Release-44b5f9de55e36b8dba73.json",
+					"name" : "mclbn384_256",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-MinSizeRel-bd59fadb2390ad51a420.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "MinSizeRel",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mcl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-4cb0a96ab001a430fc5c.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-MinSizeRel-a37f8bf7dfc7f5674a62.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gen_bint-x64-win.obj::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gen_bint-x64-win.obj-MinSizeRel-98efa9071a28e52b447c.json",
+					"name" : "gen_bint-x64-win.obj",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl-MinSizeRel-f8b8719b7fdccbed9861.json",
+					"name" : "mcl",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl_st::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl_st-MinSizeRel-58cd3a9205818d4544bc.json",
+					"name" : "mcl_st",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn256-MinSizeRel-22e24e876f7100f3627c.json",
+					"name" : "mclbn256",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384-MinSizeRel-3164d1d8b815a24d34c3.json",
+					"name" : "mclbn384",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384_256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384_256-MinSizeRel-03b09d114df64670b74e.json",
+					"name" : "mclbn384_256",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-RelWithDebInfo-9258f306161be181c42f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "mcl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-4cb0a96ab001a430fc5c.json",
+					"name" : "ALL_BUILD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZERO_CHECK-RelWithDebInfo-a37f8bf7dfc7f5674a62.json",
+					"name" : "ZERO_CHECK",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gen_bint-x64-win.obj::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gen_bint-x64-win.obj-RelWithDebInfo-98efa9071a28e52b447c.json",
+					"name" : "gen_bint-x64-win.obj",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl-RelWithDebInfo-425b7ee8faf4b042a57b.json",
+					"name" : "mcl",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mcl_st::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mcl_st-RelWithDebInfo-5adacb9a924b9c9be867.json",
+					"name" : "mcl_st",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn256-RelWithDebInfo-211af452fdef58210328.json",
+					"name" : "mclbn256",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384-RelWithDebInfo-4d92f52887e424817f8f.json",
+					"name" : "mclbn384",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mclbn384_256::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mclbn384_256-RelWithDebInfo-db996c59acc03a2dc121.json",
+					"name" : "mclbn384_256",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/build",
+		"source" : "C:/Users/parti/summer_projects/ToR/Vector Commitment/rollup_project/hyperproofs-go/mcl"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
