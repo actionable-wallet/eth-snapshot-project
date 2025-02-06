@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"testing"
+	//"testing"
 	//"strconv"
 	"github.com/alinush/go-mcl"
 	//"github.com/herumi/mcl/ffi/go/mcl"
@@ -64,28 +64,28 @@ func fillRange(aFr *[]mcl.Fr, start uint64, stop uint64, wg *sync.WaitGroup) {
 func GenerateVector(N uint64) []mcl.Fr {
 
 	var aFr []mcl.Fr
-	fmt.Printf("%d\n", N)
+	// fmt.Printf("%d\n", N)
 	aFr = make([]mcl.Fr, N)
 
 	var node1 Node
 	node1.addr = 1
 	node1.nonce = 0
-	node1.val = 1
+	node1.val = 12500
 
 	var node2 Node
 	node2.addr = 2
-	node1.nonce = 0
-	node2.val = 1
+	node2.nonce = 0
+	node2.val = 15000
 
 	var node3 Node
 	node3.addr = 3
-	node3.nonce = 0
-	node3.val = 1
+	node3.nonce = 2
+	node3.val = 20000
 
 	var node4 Node
 	node4.addr = 4
-	node4.nonce = 0
-	node4.val = 1
+	node4.nonce = 2
+	node4.val = 30000
 
 	// Limited to 21 bits of information
 	var addr int64 = node1.addr << addrOffset
@@ -116,9 +116,9 @@ func GenerateVector(N uint64) []mcl.Fr {
 		aFr[index].SetInt64(node1Element)
 	}
 	*/
-	for i, v := range aFr {
-		fmt.Printf("aFr[%d] = %s\n", i, v.GetString(10))
-	}
+	// for i, v := range aFr {
+	// 	fmt.Printf("aFr[%d] = %s\n", i, v.GetString(10))
+	// }
 	return aFr
 }
 

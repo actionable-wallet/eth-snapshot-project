@@ -1,7 +1,7 @@
 package vcs
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/alinush/go-mcl"
 	"github.com/hyperproofs/gipa-go/batch"
 	"github.com/hyperproofs/gipa-go/cm"
@@ -129,12 +129,12 @@ func (vcs *VCS) TrapdoorsGen() {
 	for i := range vcs.trapdoorsSubOne {
 		mcl.G2Mul(&vcs.VRKSubOne[i], &vcs.H, &vcs.trapdoorsSubOne[i])
 	}
-
+	
 	// Generate VRKSubOneRev: h^(s_1-1), h^(s_2-1), ....
 	for i := range vcs.trapdoorsSubOneRev {
 		mcl.G2Mul(&vcs.VRKSubOneRev[i], &vcs.H, &vcs.trapdoorsSubOneRev[i])
 	}
-
+	
 	// Generate alpha and beta for KZG
 	vcs.alpha.Random()
 	
@@ -168,7 +168,6 @@ func (vcs *VCS) KeyGenLoad(ncores uint8, L uint8, folder string, txnLimit uint64
 func (vcs *VCS) Commit(a []mcl.Fr, L uint64) mcl.G1 {
 	var digest mcl.G1
 	mcl.G1MulVec(&digest, vcs.UPK[L], a) // Not L - 1 as L = 0 has just vcs.G
-	fmt.Println("Commiting vector")
 	return digest
 }
 
