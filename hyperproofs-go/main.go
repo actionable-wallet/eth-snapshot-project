@@ -31,7 +31,6 @@ const padding int = 0x0
 func main() {
 	testing.Init()
 	flag.Parse()
-	fmt.Println("Hello, World!")
 	mcl.InitFromString("bls12-381")
 
 	dt := time.Now()
@@ -49,16 +48,6 @@ func main() {
 		// BenchmarkVCSCommit(L, 20)
 		fmt.Println("Finished")
 	} 
-}
-
-func incrementNonce(delta mcl.Fr) {
-// 	var deltaNonce = 1 << nonceOffset
-// 	return delta.SetInt64(deltaNonce)
-// }
-}
-
-func getAdditiveInverse() {
-
 }
 
 func extractValue(aFr []mcl.Fr, index uint64) {
@@ -88,43 +77,22 @@ func extractNonce(aFr []mcl.Fr, index uint64) {
 	//fmt.Printf("Binary:%064b\n", (val & mask)) 
 	fmt.Println("Nonce:", (val & mask) >> nonceOffset)
 }
-
+// Hyperproofs - Sizes(asymptoics and kB) and Proof generation (asymptotics and timings)
+// Experiments of verifying costs
 func slicingVCS(L uint8, txnLimit uint64) {
 	N := uint64(1) << L
 	K := txnLimit
 	vcs := vc.VCS{}
 	vcs.KeyGenLoad(16, L, FOLDER, K)
 
-	//var initCommit mcl.G1 = vcs.Commit(aFr, uint64(L))
-	// var delta1 mcl.Fr
-	// var delta2 mcl.Fr
-
-	//digest = vcs.Commit(aFr, uint64(L))
-	
-	
-	// for i := 0; i < 100; i++ {
-	// 	var acc_i = rand.Intn(3)
-	// 	var acc_j = rand.Intn(3)
-	// 	for acc_i != acc_j {
-	// 		acc_j = rand.Intn(3)
-	// 	}
-	// 	// Ensure a non-zero value
-	// 	var transAcc = rand.Intn(50) + 1
-	// 	var delta1 mcl.Fr 
-	// 	var delta2 mcl.Fr
-	
-	// 	delta1 = increment(delta1)
-	// 	delta2 = incrementNonce(delta2)
-	
-	// 	deltaNonce = 1 << nonceOffset
-	// 	delta1Val = transAcc << 
-	// 	transAcc << valOffset
-	// }
-	indexVec := make([]uint64, K)   // List of indices that chanaged (there can be duplicates.)
+	indexVec := make([]uint64, K)   // List of indices that c
 	proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
 	deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
 	valueVec := make([]mcl.Fr, K)   // Current value in that position.
-
+	// TODO: Store intermeditary proof trees
+	// Account for lambda constant
+	// Sizes (asymptotic and kB)
+	// Proof generation
 	var digest mcl.G1
 	var status bool
 	{
@@ -145,6 +113,10 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			deltaVec[k].SetInt64(delta)
 			valueVec[k] = aFr[indexVec[k]]
 			transactionData[int(indexVec[k])] = append(transactionData[int(indexVec[k])], valDelta)
+			// store data
+			// consider only doing this once every lambda
+			// if k % lambda == 0:
+			vcs.OpenAll(aFr)
 			// Need to map to inverse in order to show negative
 		}
 	}
@@ -182,6 +154,7 @@ func slicingVCS(L uint8, txnLimit uint64) {
 	for k := uint64(0); k < K; k++ {
 		loc := indexVec[k]
 		delta := deltaVec[k]
+		// Alter for some constant lambda
 		vcs.UpdateProofTree(loc, delta)
 	}
 
