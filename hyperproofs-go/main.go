@@ -83,23 +83,26 @@ func extractNonce(aFr []mcl.Fr, index uint64) {
 // Hyperproofs - Sizes(asymptoics and kB) and Proof generation (asymptotics and timings)
 // Experiments of verifying costs
 func slicingVCS(L uint8, txnLimit uint64) {
-	N := uint64(1) << L
-	K := txnLimit
-	vcs := vc.VCS{}
-	vcs.KeyGenLoad(16, L, FOLDER, K)
+	for i := 0; i < 3; i++ {
+		N := uint64(1) << L
+		K := txnLimit
 
-	indexVec := make([]uint64, K)   // List of indices that c
-	proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
-	deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
-	valueVec := make([]mcl.Fr, K)   // Current value in that position.
-	// TODO: Store intermeditary proof trees
-	// Account for lambda constant
-	// Sizes (asymptotic and kB)
-	// Proof generation
-	var digest mcl.G1
-	var status bool
-	{
+		vcs := vc.VCS{}
+		vcs.KeyGenLoad(16, L, FOLDER, K)
+		indexVec := make([]uint64, K)   // List of indices that c
+		proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
+		deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
+		valueVec := make([]mcl.Fr, K)   // Current value in that position.
+		// TODO: Store intermeditary proof trees
+		// Account for lambda constant
+		// Sizes (asymptotic and kB)
+		// Proof generation
+		var digest mcl.G1
+		var status bool
+
 		aFr := vc.GenerateVector(N)
+		vc.SaveVector(N, aFr)
+
 		extractValue(aFr, 0)
 		extractNonce(aFr, 0)
 		digest = vcs.Commit(aFr, uint64(L))
@@ -116,7 +119,25 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			// 0 in 21 MSB bits, 0x1 in next 21 bits (increment nonce) // random 21bit value
 			deltaVec[k].SetInt64(delta)
 			valueVec[k] = aFr[indexVec[k]]
-			transactionData[int(indexVec[k])] = append(transactionData[int(indexVec[k])], valDelta)
+			valDelta = valDelta >> valOffset
+
+			index := int(indexVec[k])
+			for i < 4 {
+				if i != index {
+					transactionData[i] = append(transactionData[i], 0)
+				}
+				i++
+			}
+			transactionData[index] = append(transactionData[index], valDelta)
+
+			// fmt.Println(vc.SEP)
+			// fmt.Println(indexVec)
+			// fmt.Println(vc.SEP)
+			// fmt.Println(proofVec)
+			// fmt.Println(vc.SEP)
+			// fmt.Println(deltaVec)
+			// fmt.Println(vc.SEP)
+			// fmt.Println(valueVec)
 			// store data
 			// consider only doing this once every lambda
 			// if k % lambda == 0:
@@ -124,126 +145,126 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			// vcs contains the state information at the kth snapshot(not the slice)
 			// Need to map to inverse in order to show negative
 		}
-	}
-	fmt.Println("Before")
-	for i := uint64(0); i < 3; i++ {
-		fmt.Println(valueVec[i])
-		extractValue(valueVec, i)
-	}
 
-	status = true
-	var loc uint64
+		fmt.Println("Before")
+		for i := uint64(0); i < 3; i++ {
+			fmt.Println(valueVec[i])
+			extractValue(valueVec, i)
+		}
 
-	for k := uint64(0); k < K; k++ {
-		loc = indexVec[k]
-		// status = status && vcs.Verify(digest, loc, valueMap[loc], proofVec[k])
-		status = status && vcs.Verify(digest, loc, valueVec[k], proofVec[k])
+		status = true
+		var loc uint64
+
+		for k := uint64(0); k < K; k++ {
+			loc = indexVec[k]
+			// status = status && vcs.Verify(digest, loc, valueMap[loc], proofVec[k])
+			status = status && vcs.Verify(digest, loc, valueVec[k], proofVec[k])
+			if status == false {
+				fmt.Println("Error!")
+			} else {
+				fmt.Println("\033[32mVerification Passed ✅\033[0m")
+			}
+		}
+
+		status = true
+		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
 		if status == false {
-			fmt.Println("Error!")
+			fmt.Println("Fast Verification Failed")
 		} else {
-			fmt.Println("\033[32mVerification Passed ✅\033[0m")
+			fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
+		}
+
+		// Make some changes to the vector positions.
+		for k := uint64(0); k < K; k++ {
+			loc := indexVec[k]
+			delta := deltaVec[k]
+			// Alter for some constant lambda
+			vcs.UpdateProofTree(loc, delta)
+		}
+
+		// Update the value vector
+		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+		// Get latest proofs
+		for k := uint64(0); k < K; k++ {
+			proofVec[k] = vcs.GetProofPath(indexVec[k])
+		}
+
+		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+		status = true
+		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+		if status == false {
+			fmt.Println("UpdateProofTree Failed")
+		} else {
+			fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
+		}
+
+		vcs.UpdateProofTreeBulk(indexVec, deltaVec)
+
+		// Update the value vector
+		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+		// Get latest proofs
+		for k := uint64(0); k < K; k++ {
+			proofVec[k] = vcs.GetProofPath(indexVec[k])
+		}
+		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+		status = true
+		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+		if status == false {
+			fmt.Println("UpdateProofTreeBulk Failed")
+		} else {
+			fmt.Println("\033[32mUpdateProofTreeBulk Passed ✅\033[0m")
+		}
+		fmt.Println(vc.SEP)
+		fmt.Println("Transaction Data:")
+		fmt.Println(transactionData)
+		fmt.Println(vc.SEP)
+		// var aggProof batch.Proof
+		// aggProof = vcs.AggProve(indexVec, proofVec)
+
+		// status = status && vcs.AggVerify(aggProof, digest, indexVec, valueVec)
+		// if status == false {
+		// 	fmt.Println("Aggregation failed")
+		// }
+
+		// // Simple do another round of updates to check if aggregated succeeded
+		// vcs.UpdateProofTreeBulk(indexVec, deltaVec)
+		// valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+		// for k := uint64(0); k < K; k++ {
+		// 	proofVec[k] = vcs.GetProofPath(indexVec[k])
+		// }
+		// digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+		// var aggIndex []uint64
+		// var aggProofIndv [][]mcl.G1
+		// var aggValue []mcl.Fr
+
+		// aggIndex = make([]uint64, txnLimit)
+		// aggProofIndv = make([][]mcl.G1, txnLimit)
+		// aggValue = make([]mcl.Fr, txnLimit)
+
+		// for j := uint64(0); j < txnLimit; j++ {
+		// 	id := uint64(rand.Intn(int(K))) // Pick an index from the saved list of vector positions
+		// 	aggIndex[j] = indexVec[id]
+		// 	aggProofIndv[j] = proofVec[id]
+		// 	aggValue[j] = valueVec[id]
+		// }
+
+		// aggProof = vcs.AggProve(aggIndex, aggProofIndv)
+
+		// status = status && vcs.AggVerify(aggProof, digest, aggIndex, aggValue)
+		// if status == false {
+		// 	fmt.Println("Aggregation#2 failed")
+		// }
+		fmt.Println("After")
+		for i := uint64(0); i < 3; i++ {
+			fmt.Println(valueVec[i])
+			extractValue(valueVec, i)
 		}
 	}
-
-	status = true
-	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-	if status == false {
-		fmt.Println("Fast Verification Failed")
-	} else {
-		fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
-	}
-
-	// Make some changes to the vector positions.
-	for k := uint64(0); k < K; k++ {
-		loc := indexVec[k]
-		delta := deltaVec[k]
-		// Alter for some constant lambda
-		vcs.UpdateProofTree(loc, delta)
-	}
-
-	// Update the value vector
-	valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-
-	// Get latest proofs
-	for k := uint64(0); k < K; k++ {
-		proofVec[k] = vcs.GetProofPath(indexVec[k])
-	}
-
-	digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-	status = true
-	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-	if status == false {
-		fmt.Println("UpdateProofTree Failed")
-	} else {
-		fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
-	}
-
-	vcs.UpdateProofTreeBulk(indexVec, deltaVec)
-
-	// Update the value vector
-	valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-
-	// Get latest proofs
-	for k := uint64(0); k < K; k++ {
-		proofVec[k] = vcs.GetProofPath(indexVec[k])
-	}
-	digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-	status = true
-	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-	if status == false {
-		fmt.Println("UpdateProofTreeBulk Failed")
-	} else {
-		fmt.Println("\033[32mUpdateProofTreeBulk Passed ✅\033[0m")
-	}
-	fmt.Println(vc.SEP)
-	fmt.Println("Transaction Data:")
-	fmt.Println(transactionData)
-	fmt.Println(vc.SEP)
-	// var aggProof batch.Proof
-	// aggProof = vcs.AggProve(indexVec, proofVec)
-
-	// status = status && vcs.AggVerify(aggProof, digest, indexVec, valueVec)
-	// if status == false {
-	// 	fmt.Println("Aggregation failed")
-	// }
-
-	// // Simple do another round of updates to check if aggregated succeeded
-	// vcs.UpdateProofTreeBulk(indexVec, deltaVec)
-	// valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-	// for k := uint64(0); k < K; k++ {
-	// 	proofVec[k] = vcs.GetProofPath(indexVec[k])
-	// }
-	// digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-	// var aggIndex []uint64
-	// var aggProofIndv [][]mcl.G1
-	// var aggValue []mcl.Fr
-
-	// aggIndex = make([]uint64, txnLimit)
-	// aggProofIndv = make([][]mcl.G1, txnLimit)
-	// aggValue = make([]mcl.Fr, txnLimit)
-
-	// for j := uint64(0); j < txnLimit; j++ {
-	// 	id := uint64(rand.Intn(int(K))) // Pick an index from the saved list of vector positions
-	// 	aggIndex[j] = indexVec[id]
-	// 	aggProofIndv[j] = proofVec[id]
-	// 	aggValue[j] = valueVec[id]
-	// }
-
-	// aggProof = vcs.AggProve(aggIndex, aggProofIndv)
-
-	// status = status && vcs.AggVerify(aggProof, digest, aggIndex, aggValue)
-	// if status == false {
-	// 	fmt.Println("Aggregation#2 failed")
-	// }
-	fmt.Println("After")
-	for i := uint64(0); i < 3; i++ {
-		fmt.Println(valueVec[i])
-		extractValue(valueVec, i)
-	}
-
 }
 
 func SecondaryStateUpdate(indexVec []uint64, deltaVec []mcl.Fr, valueVec []mcl.Fr) []mcl.Fr {
