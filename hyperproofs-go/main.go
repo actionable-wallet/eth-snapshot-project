@@ -1,4 +1,5 @@
 package main
+
 /*
 1. Store commitments, lets say in an array of VCs
 2. Store transactions in a key-value mapping (reference Joseph's text)
@@ -9,17 +10,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
+	"strconv"
 	"testing"
 	"time"
-	"strconv"
-	"math/rand"
-	vc "github.com/hyperproofs/hyperproofs-go/vcs"
+
 	"github.com/alinush/go-mcl"
 	"github.com/hyperproofs/hyperproofs-go/vcs"
+	vc "github.com/hyperproofs/hyperproofs-go/vcs"
 )
 
-const FOLDER = "./pkvk-26"
+const FOLDER = "./pkvk-02"
 
 var transactionData = make(map[int][]int)
 
@@ -47,36 +49,37 @@ func main() {
 		slicingVCS(L, 20)
 		// BenchmarkVCSCommit(L, 20)
 		fmt.Println("Finished")
-	} 
+	}
 }
 
 func extractValue(aFr []mcl.Fr, index uint64) {
-	var mask int64 = ((1 << 21) - 1) << valOffset   // Explicitly declaring uint64 type
+	var mask int64 = ((1 << 21) - 1) << valOffset // Explicitly declaring uint64 type
 
-    //fmt.Printf("Binary:%064b\n", mask)  // Output: 111111111111111111111
+	//fmt.Printf("Binary:%064b\n", mask)  // Output: 111111111111111111111
 	val, err := strconv.ParseInt(aFr[index].GetString(10), 10, 64) // Convert string to int
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	fmt.Println("Val:", (val & mask) >> valOffset)
+	fmt.Println("Val:", (val&mask)>>valOffset)
 }
 
 func extractNonce(aFr []mcl.Fr, index uint64) {
-	var mask int64 = ((1 << 21) - 1) << nonceOffset   // Explicitly declaring uint64 type
+	var mask int64 = ((1 << 21) - 1) << nonceOffset // Explicitly declaring uint64 type
 
-    fmt.Printf("Binary:%064b\n", mask)  // Output: 111111111111111111111
+	fmt.Printf("Binary:%064b\n", mask)                             // Output: 111111111111111111111
 	val, err := strconv.ParseInt(aFr[index].GetString(10), 10, 64) // Convert string to int
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 	//fmt.Println("Value:")
-	//fmt.Printf("Binary:%064b\n", val) 
+	//fmt.Printf("Binary:%064b\n", val)
 	fmt.Println("After:")
-	//fmt.Printf("Binary:%064b\n", (val & mask)) 
-	fmt.Println("Nonce:", (val & mask) >> nonceOffset)
+	//fmt.Printf("Binary:%064b\n", (val & mask))
+	fmt.Println("Nonce:", (val&mask)>>nonceOffset)
 }
+
 // Hyperproofs - Sizes(asymptoics and kB) and Proof generation (asymptotics and timings)
 // Experiments of verifying costs
 func slicingVCS(L uint8, txnLimit uint64) {
@@ -101,9 +104,10 @@ func slicingVCS(L uint8, txnLimit uint64) {
 		extractNonce(aFr, 0)
 		digest = vcs.Commit(aFr, uint64(L))
 		vcs.OpenAll(aFr)
-		
+
 		addressChange := 0x0 << addrOffset
 		incrementNonce := 0x1 << nonceOffset
+		// vc analogy of mpt states
 		for k := uint64(0); k < K; k++ {
 			indexVec[k] = uint64(rand.Intn(int(N)))
 			proofVec[k] = vcs.GetProofPath(indexVec[k])
@@ -117,6 +121,7 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			// consider only doing this once every lambda
 			// if k % lambda == 0:
 			vcs.OpenAll(aFr)
+			// vcs contains the state information at the kth snapshot(not the slice)
 			// Need to map to inverse in order to show negative
 		}
 	}
@@ -139,7 +144,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			fmt.Println("\033[32mVerification Passed ✅\033[0m")
 		}
 	}
-	
 
 	status = true
 	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
@@ -148,7 +152,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 	} else {
 		fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
 	}
-	
 
 	// Make some changes to the vector positions.
 	for k := uint64(0); k < K; k++ {
@@ -176,7 +179,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 		fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
 	}
 
-
 	vcs.UpdateProofTreeBulk(indexVec, deltaVec)
 
 	// Update the value vector
@@ -188,7 +190,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 	}
 	digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
 
-	
 	status = true
 	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
 	if status == false {
@@ -203,13 +204,10 @@ func slicingVCS(L uint8, txnLimit uint64) {
 	// var aggProof batch.Proof
 	// aggProof = vcs.AggProve(indexVec, proofVec)
 
-	
-
 	// status = status && vcs.AggVerify(aggProof, digest, indexVec, valueVec)
 	// if status == false {
 	// 	fmt.Println("Aggregation failed")
 	// }
-
 
 	// // Simple do another round of updates to check if aggregated succeeded
 	// vcs.UpdateProofTreeBulk(indexVec, deltaVec)
@@ -235,7 +233,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 	// }
 
 	// aggProof = vcs.AggProve(aggIndex, aggProofIndv)
-	
 
 	// status = status && vcs.AggVerify(aggProof, digest, aggIndex, aggValue)
 	// if status == false {
@@ -246,7 +243,6 @@ func slicingVCS(L uint8, txnLimit uint64) {
 		fmt.Println(valueVec[i])
 		extractValue(valueVec, i)
 	}
-
 
 }
 
@@ -294,7 +290,7 @@ func BenchmarkVCSCommit(L uint8, txnLimit uint64) string {
 	vc.SaveVector(N, aFr)
 	dt := time.Now()
 	vcs.Commit(aFr, uint64(L))
-	
+
 	fmt.Println(vc.SEP)
 	duration := time.Since(dt)
 	out := fmt.Sprintf("BenchmarkVCS/%d/Commit;%d%40d ns/op", L, txnLimit, duration.Nanoseconds())
@@ -305,12 +301,9 @@ func BenchmarkVCSCommit(L uint8, txnLimit uint64) string {
 	for i, v := range aFr {
 		fmt.Printf("aFr[%d] = %s\n", i, v.GetString(10))
 	}
-	
 
-	
 	return out
 }
-
 
 func hyperGenerateKeys(L uint8, fake bool) *vcs.VCS {
 
@@ -320,8 +313,8 @@ func hyperGenerateKeys(L uint8, fake bool) *vcs.VCS {
 	fmt.Println("L:", L, "N:", N)
 	folderPath := fmt.Sprintf("pkvk-%02d", L)
 	/*
-	Altered key generation parameters from 2^12 => 2^7
-	Do not need to alter it. 
+		Altered key generation parameters from 2^12 => 2^7
+		Do not need to alter it.
 	*/
 	vcs.KeyGen(16, L, folderPath, 128)
 
@@ -339,3 +332,92 @@ func hyperLoadKeys(L uint8) *vcs.VCS {
 	fmt.Println("KeyGenLoad ... Done")
 	return &vcs
 }
+
+// Input: si: the state to be queried, k: the index of the account to be queried
+// Output: the value in account k at state si
+// Assume snapshots are sorted in lexicographic order which represents the order of the states.
+// func RetrieveStateData(si []mcl.Fr, k uint64, snapshots [][]mcl.Fr, indexVec []uint64, deltaVec []mcl.Fr) mcl.Fr {
+// 	// Step 1: Finds the state sj
+// 	sj := findClosestSnapshot(si, snapshots)
+
+// 	// Step 2: Recovers all transactions between si and sj, generates a snapshot for the intermidiate state
+// 	T_delta := recoverTransactions(si, sj, indexVec, deltaVec)
+
+// 	// Step 3: Computes the value of the kth position
+// 	var result mcl.Fr
+// 	mcl.FrAdd(&result, &sj[k], &T_delta[k])
+// 	return result
+// }
+
+// // This function uses binary search to find the closest snapshot to the given state.
+// func findClosestSnapshot(si []mcl.Fr, snapshots [][]mcl.Fr) []mcl.Fr {
+// 	low, high := 0, len(snapshots)-1
+// 	closest := snapshots[0]
+// 	for low <= high {
+// 		mid := low + (high-low)/2
+// 		if compareSnapshots(snapshots[mid], si) <= 0 {
+// 			closest = snapshots[mid]
+// 			low = mid + 1
+// 		} else {
+// 			high = mid - 1
+// 		}
+// 	}
+// 	return closest
+// }
+
+// This function comapres two snapshots according to the lexicographic order.
+// func compareSnapshots(a, b []mcl.Fr) int {
+// 	n := len(a)
+// 	for i := 0; i < n; i++ {
+// 		s1 := a[i].GetString(10)
+// 		s2 := b[i].GetString(10)
+// 		if s1 < s2 {
+// 			return -1
+// 		} else if s1 > s2 {
+// 			return 1
+// 		}
+// 	}
+// 	return 0
+// }
+
+// This function recovers all transactions between two states.
+// How to check whether a transacton happened between two states?
+// func recoverTransactions(si, sj []mcl.Fr, indexVec []uint64, deltaVec []mcl.Fr) []mcl.Fr {
+// 	T_delta := make([]mcl.Fr, len(sj))
+// 	for i := range T_delta {
+// 		T_delta[i].SetInt64(0)
+// 	}
+
+// 	for i := 0; i < len(indexVec); i++ {
+// 		account := indexVec[i]
+// 		mcl.FrAdd(&T_delta[account], &T_delta[account], &deltaVec[i])
+// 	}
+// 	return T_delta
+// }
+
+// Input: si: a state si to be queried of the verifier's choice
+// Output: A state proof for the query
+// func GetStateProof(vcs vcs.VCS, si []mcl.Fr, snapshots [][]mcl.Fr, indexVec []uint64, deltaVec []mcl.Fr) {
+// 	// Step1: Chooses a random position k
+// 	k := uint64(rand.Intn(len(si)))
+
+// 	// Step2: Finds the closest snapshot and calculates the delta between two states
+// 	sj := findClosestSnapshot(si, snapshots)
+// 	T_delta := recoverTransactions(si, sj, indexVec, deltaVec)
+
+// 	// Step3: Computes the proof path for the kth position
+// 	si_prime := make([]mcl.Fr, len(si))
+// 	for i := range si {
+// 		mcl.FrAdd(&si_prime[i], &sj[i], &T_delta[i])
+// 	}
+// 	digest := vcs.Commit(si_prime, uint64(len(si_prime)))
+// 	proofPath := vcs.GetProofPath(k)
+
+// 	// Step4: The verifier verifies the proof
+// 	status := vcs.Verify(digest, k, si_prime[k], proofPath)
+// 	if status {
+// 		fmt.Println("State proof is valid ✅")
+// 	} else {
+// 		fmt.Println("State proof is invalid ❌")
+// 	}
+// }
