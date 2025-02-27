@@ -84,6 +84,7 @@ func extractNonce(aFr []mcl.Fr, index uint64) {
 // Experiments of verifying costs
 func slicingVCS(L uint8, txnLimit uint64) {
 	for i := 0; i < 3; i++ {
+		fmt.Println("Iteration:", i)
 		N := uint64(1) << L
 		K := txnLimit
 
@@ -122,11 +123,10 @@ func slicingVCS(L uint8, txnLimit uint64) {
 			valDelta = valDelta >> valOffset
 
 			index := int(indexVec[k])
-			for i < 4 {
+			for i := 0; i < 4; i++ {
 				if i != index {
 					transactionData[i] = append(transactionData[i], 0)
 				}
-				i++
 			}
 			transactionData[index] = append(transactionData[index], valDelta)
 
@@ -220,8 +220,11 @@ func slicingVCS(L uint8, txnLimit uint64) {
 		}
 		fmt.Println(vc.SEP)
 		fmt.Println("Transaction Data:")
-		fmt.Println(transactionData)
+		for account, transactions := range transactionData {
+			fmt.Printf("Account %d: %v\n", account, transactions)
+	}
 		fmt.Println(vc.SEP)
+
 		// var aggProof batch.Proof
 		// aggProof = vcs.AggProve(indexVec, proofVec)
 
