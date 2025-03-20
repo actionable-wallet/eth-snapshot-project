@@ -4,9 +4,8 @@ package main
 1. Store commitments, lets say in an array of VCs
 2. Store transactions in a key-value mapping (reference Joseph's text)
 3. How do they do homomorphism
-
-
 */
+
 import (
 	"flag"
 	"fmt"
@@ -17,7 +16,6 @@ import (
 	"time"
 
 	"github.com/alinush/go-mcl"
-	"github.com/hyperproofs/hyperproofs-go/vcs"
 	vc "github.com/hyperproofs/hyperproofs-go/vcs"
 )
 
@@ -38,7 +36,7 @@ func main() {
 	dt := time.Now()
 	fmt.Println("Specific date and time is: ", dt.Format(time.UnixDate))
 
-	fmt.Println(vcs.SEP)
+	fmt.Println(vc.SEP)
 
 	args := os.Args
 
@@ -52,34 +50,6 @@ func main() {
 	}
 }
 
-func extractValue(aFr []mcl.Fr, index uint64) {
-	var mask int64 = ((1 << 21) - 1) << valOffset // Explicitly declaring uint64 type
-
-	//fmt.Printf("Binary:%064b\n", mask)  // Output: 111111111111111111111
-	val, err := strconv.ParseInt(aFr[index].GetString(10), 10, 64) // Convert string to int
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	fmt.Println("Val:", (val&mask)>>valOffset)
-}
-
-func extractNonce(aFr []mcl.Fr, index uint64) {
-	var mask int64 = ((1 << 21) - 1) << nonceOffset // Explicitly declaring uint64 type
-
-	fmt.Printf("Binary:%064b\n", mask)                             // Output: 111111111111111111111
-	val, err := strconv.ParseInt(aFr[index].GetString(10), 10, 64) // Convert string to int
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	//fmt.Println("Value:")
-	//fmt.Printf("Binary:%064b\n", val)
-	fmt.Println("After:")
-	//fmt.Printf("Binary:%064b\n", (val & mask))
-	fmt.Println("Nonce:", (val&mask)>>nonceOffset)
-}
-
 // Hyperproofs - Sizes(asymptoics and kB) and Proof generation (asymptotics and timings)
 // Experiments of verifying costs
 func slicingVCS(L uint8, txnLimit uint64) {
@@ -88,186 +58,339 @@ func slicingVCS(L uint8, txnLimit uint64) {
 		N := uint64(1) << L
 		K := txnLimit
 
-		vcs := vc.VCS{}
-		vcs.KeyGenLoad(16, L, FOLDER, K)
-		indexVec := make([]uint64, K)   // List of indices that c
-		proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
-		deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
-		valueVec := make([]mcl.Fr, K)   // Current value in that position.
-		// TODO: Store intermeditary proof trees
-		// Account for lambda constant
-		// Sizes (asymptotic and kB)
-		// Proof generation
-		var digest mcl.G1
-		var status bool
+		// 1. Initialize VCS and the initial state
+		vcs, aFr := initializeVCS(L, K, N)
+		digest := vcs.Commit(aFr, uint64(L))
 
-		aFr := vc.GenerateVector(N)
-		vc.SaveVector(N, aFr)
+		fmt.Println(vc.SEP)
+		printFullState(aFr)
+		fmt.Println(vc.SEP)
 
-		extractValue(aFr, 0)
-		extractNonce(aFr, 0)
-		digest = vcs.Commit(aFr, uint64(L))
-		vcs.OpenAll(aFr)
+		// 2. Generate transactions
 
-		addressChange := 0x0 << addrOffset
-		incrementNonce := 0x1 << nonceOffset
-		// vc analogy of mpt states
-		for k := uint64(0); k < K; k++ {
-			indexVec[k] = uint64(rand.Intn(int(N)))
-			proofVec[k] = vcs.GetProofPath(indexVec[k])
-			valDelta := rand.Intn(1000) << valOffset
-			delta := int64(addressChange ^ incrementNonce ^ valDelta ^ padding)
-			// 0 in 21 MSB bits, 0x1 in next 21 bits (increment nonce) // random 21bit value
-			deltaVec[k].SetInt64(delta)
-			valueVec[k] = aFr[indexVec[k]]
-			valDelta = valDelta >> valOffset
-
-			index := int(indexVec[k])
-			for i := 0; i < 4; i++ {
-				if i != index {
-					transactionData[i] = append(transactionData[i], 0)
-				}
-			}
-			transactionData[index] = append(transactionData[index], valDelta)
-
-			// fmt.Println(vc.SEP)
-			// fmt.Println(indexVec)
-			// fmt.Println(vc.SEP)
-			// fmt.Println(proofVec)
-			// fmt.Println(vc.SEP)
-			// fmt.Println(deltaVec)
-			// fmt.Println(vc.SEP)
-			// fmt.Println(valueVec)
-			// store data
-			// consider only doing this once every lambda
-			// if k % lambda == 0:
-			vcs.OpenAll(aFr)
-			// vcs contains the state information at the kth snapshot(not the slice)
-			// Need to map to inverse in order to show negative
-		}
+		indexVec, proofVec, deltaVec, valueVec := generateTransactions(vcs, aFr, K, N)
+		
 
 		fmt.Println("Before")
 		for i := uint64(0); i < 3; i++ {
 			fmt.Println(valueVec[i])
-			extractValue(valueVec, i)
+			extractField(valueVec, i, valOffset, "Value")
 		}
 
-		status = true
-		var loc uint64
+		// 3. Verify transactions
+		verifyTransactions(vcs, digest, indexVec, valueVec, proofVec)
 
-		for k := uint64(0); k < K; k++ {
-			loc = indexVec[k]
-			// status = status && vcs.Verify(digest, loc, valueMap[loc], proofVec[k])
-			status = status && vcs.Verify(digest, loc, valueVec[k], proofVec[k])
-			if status == false {
-				fmt.Println("Error!")
-			} else {
-				fmt.Println("\033[32mVerification Passed ✅\033[0m")
-			}
-		}
+		// 4. Update the state
+		updateState(vcs, indexVec, deltaVec)
 
-		status = true
-		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-		if status == false {
-			fmt.Println("Fast Verification Failed")
-		} else {
-			fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
-		}
+		// 5. Get the latest proofs
+		updateProofs(vcs, digest, indexVec, deltaVec, valueVec, proofVec)
 
-		// Make some changes to the vector positions.
-		for k := uint64(0); k < K; k++ {
-			loc := indexVec[k]
-			delta := deltaVec[k]
-			// Alter for some constant lambda
-			vcs.UpdateProofTree(loc, delta)
-		}
+		// 6. Update the state in bulk and verify the updated state
+		bulkUpdateAndVerify(vcs, digest, indexVec, deltaVec, valueVec, proofVec)
 
-		// Update the value vector
-		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-
-		// Get latest proofs
-		for k := uint64(0); k < K; k++ {
-			proofVec[k] = vcs.GetProofPath(indexVec[k])
-		}
-
-		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-		status = true
-		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-		if status == false {
-			fmt.Println("UpdateProofTree Failed")
-		} else {
-			fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
-		}
-
-		vcs.UpdateProofTreeBulk(indexVec, deltaVec)
-
-		// Update the value vector
-		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-
-		// Get latest proofs
-		for k := uint64(0); k < K; k++ {
-			proofVec[k] = vcs.GetProofPath(indexVec[k])
-		}
-		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-		status = true
-		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
-		if status == false {
-			fmt.Println("UpdateProofTreeBulk Failed")
-		} else {
-			fmt.Println("\033[32mUpdateProofTreeBulk Passed ✅\033[0m")
-		}
 		fmt.Println(vc.SEP)
-		fmt.Println("Transaction Data:")
-		for account, transactions := range transactionData {
-			fmt.Printf("Account %d: %v\n", account, transactions)
-	}
+		printFullState(aFr)
 		fmt.Println(vc.SEP)
 
-		// var aggProof batch.Proof
-		// aggProof = vcs.AggProve(indexVec, proofVec)
-
-		// status = status && vcs.AggVerify(aggProof, digest, indexVec, valueVec)
-		// if status == false {
-		// 	fmt.Println("Aggregation failed")
-		// }
-
-		// // Simple do another round of updates to check if aggregated succeeded
-		// vcs.UpdateProofTreeBulk(indexVec, deltaVec)
-		// valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
-		// for k := uint64(0); k < K; k++ {
-		// 	proofVec[k] = vcs.GetProofPath(indexVec[k])
-		// }
-		// digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
-
-		// var aggIndex []uint64
-		// var aggProofIndv [][]mcl.G1
-		// var aggValue []mcl.Fr
-
-		// aggIndex = make([]uint64, txnLimit)
-		// aggProofIndv = make([][]mcl.G1, txnLimit)
-		// aggValue = make([]mcl.Fr, txnLimit)
-
-		// for j := uint64(0); j < txnLimit; j++ {
-		// 	id := uint64(rand.Intn(int(K))) // Pick an index from the saved list of vector positions
-		// 	aggIndex[j] = indexVec[id]
-		// 	aggProofIndv[j] = proofVec[id]
-		// 	aggValue[j] = valueVec[id]
-		// }
-
-		// aggProof = vcs.AggProve(aggIndex, aggProofIndv)
-
-		// status = status && vcs.AggVerify(aggProof, digest, aggIndex, aggValue)
-		// if status == false {
-		// 	fmt.Println("Aggregation#2 failed")
-		// }
 		fmt.Println("After")
 		for i := uint64(0); i < 3; i++ {
 			fmt.Println(valueVec[i])
-			extractValue(valueVec, i)
+			extractField(valueVec, i, valOffset, "Value")
+		}
+
+		fmt.Println(vc.SEP)
+		fmt.Println(vc.SEP)
+	}	
+}
+
+// This function generates transactions.
+func generateTransactions(vcs vc.VCS, aFr []mcl.Fr, K uint64, N uint64) ([]uint64, [][]mcl.G1, []mcl.Fr, []mcl.Fr) {
+	indexVec := make([]uint64, K)   // List of indices that changed.
+	proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
+	deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
+	valueVec := make([]mcl.Fr, K)   // Current value in that position.
+	
+	for k := uint64(0); k < K; k++ {
+		
+		indexVec[k] = uint64(rand.Intn(int(N)))
+		proofVec[k] = vcs.GetProofPath(indexVec[k])
+		valDelta := rand.Intn(1000) << valOffset
+		addressChange := 0x0 << addrOffset
+		incrementNonce := 0x1 << nonceOffset
+		delta := int64(addressChange ^ incrementNonce ^ valDelta ^ padding)
+
+		deltaVec[k].SetInt64(delta)
+		valueVec[k] = aFr[indexVec[k]]
+		valDelta = valDelta >> valOffset
+
+		index := int(indexVec[k])
+		for i := 0; i < 4; i++ {
+			if i != index {
+				transactionData[i] = append(transactionData[i], 0)
+			}
+		}
+		transactionData[int(indexVec[k])] = append(transactionData[int(indexVec[k])], valDelta)
+		vcs.OpenAll(aFr)
+	}
+
+	return indexVec, proofVec, deltaVec, valueVec
+}
+
+func verifyTransactions(vcs vc.VCS, digest mcl.G1, indexVec []uint64, valueVec []mcl.Fr, proofVec [][]mcl.G1) {
+	status := true
+	for k, loc := range indexVec {
+		status = status && vcs.Verify(digest, loc, valueVec[k], proofVec[k])
+		if !status {
+			fmt.Println("Error!")
+		} else {
+			fmt.Println("\033[32mVerification Passed ✅\033[0m")
 		}
 	}
+	status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+	if !status {
+		fmt.Println("Fast Verification Failed")
+	} else {
+		fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
+	}
+}
+
+func updateState(vcs vc.VCS, indexVec []uint64, deltaVec []mcl.Fr) {
+	for k := uint64(0); k < uint64(len(indexVec)); k++ {
+		vcs.UpdateProofTree(indexVec[k], deltaVec[k])
+	}
+}
+
+func updateProofs(vcs vc.VCS, digest mcl.G1, indexVec []uint64, deltaVec []mcl.Fr, valueVec []mcl.Fr, proofVec [][]mcl.G1) {
+	// Update the value vector
+	valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+	// Get latest proofs
+	for k := uint64(0); k < uint64(len(indexVec)); k++ {
+		proofVec[k] = vcs.GetProofPath(indexVec[k])
+	}
+
+	digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+	status, _ := vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+	if status {
+		fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
+	} else {
+		fmt.Println("UpdateProofTree Failed")
+	}
+}
+
+// Perform bulk updates on the proof tree and verify the updated state
+func bulkUpdateAndVerify(vcs vc.VCS, digest mcl.G1, indexVec []uint64, deltaVec []mcl.Fr, valueVec []mcl.Fr, proofVec [][]mcl.G1) (mcl.G1, [][]mcl.G1, bool) {
+    // 1. Perform bulk updates
+    vcs.UpdateProofTreeBulk(indexVec, deltaVec)
+
+    // 2. Update the value vector
+    valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+    // 3. Get the latest proof paths
+    for k := uint64(0); k < uint64(len(indexVec)); k++ {
+        proofVec[k] = vcs.GetProofPath(indexVec[k])
+    }
+
+    // 4. Update the commitment digest
+    digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+    // 5. Perform batch verification
+    status, _ := vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+    if !status {
+        fmt.Println("UpdateProofTreeBulk Failed")
+    } else {
+        fmt.Println("\033[32mUpdateProofTreeBulk Passed ✅\033[0m")
+    }
+
+    return digest, proofVec, status
+}
+
+
+// func slicingVCS(L uint8, txnLimit uint64) {
+// 	for i := 0; i < 3; i++ {
+// 		fmt.Println("Running iteration-", i)
+// 		N := uint64(1) << L
+// 		K := txnLimit
+// 		vcs, aFr := initializeVCS(L, K, N)
+
+// 		indexVec := make([]uint64, K)   // List of indices that changed.
+// 		proofVec := make([][]mcl.G1, K) // Proofs of the changed indices.
+// 		deltaVec := make([]mcl.Fr, K)   // Magnitude of the changes.
+// 		valueVec := make([]mcl.Fr, K)   // Current value in that position.
+// 		// TODO: Store intermeditary proof trees
+// 		// Account for lambda constant
+// 		// Sizes (asymptotic and kB)
+// 		// Proof generation
+// 		var digest mcl.G1
+// 		var status bool
+
+// 		fmt.Println(vc.SEP)
+// 		printFullState(aFr)
+// 		fmt.Println(vc.SEP)
+
+// 		extractField(aFr, 0, valOffset, "Value")
+// 		extractField(aFr, 0, nonceOffset, "Nonce")
+// 		digest = vcs.Commit(aFr, uint64(L))
+// 		vcs.OpenAll(aFr)
+
+// 		addressChange := 0x0 << addrOffset
+// 		incrementNonce := 0x1 << nonceOffset
+// 		// vc analogy of mpt states
+// 		for k := uint64(0); k < K; k++ {
+// 			indexVec[k] = uint64(rand.Intn(int(N)))
+// 			proofVec[k] = vcs.GetProofPath(indexVec[k])
+// 			valDelta := rand.Intn(1000) << valOffset
+// 			delta := int64(addressChange ^ incrementNonce ^ valDelta ^ padding)
+// 			// 0 in 21 MSB bits, 0x1 in next 21 bits (increment nonce) // random 21bit value
+// 			deltaVec[k].SetInt64(delta)
+// 			valueVec[k] = aFr[indexVec[k]]
+// 			valDelta = valDelta >> valOffset
+
+// 			index := int(indexVec[k])
+// 			for i := 0; i < 4; i++ {
+// 				if i != index {
+// 					transactionData[i] = append(transactionData[i], 0)
+// 				}
+// 			}
+// 			transactionData[index] = append(transactionData[index], valDelta)
+
+// 			// store data
+// 			// consider only doing this once every lambda
+// 			// if k % lambda == 0:
+// 			vcs.OpenAll(aFr)
+// 			// vcs contains the state information at the kth snapshot(not the slice)
+// 			// Need to map to inverse in order to show negative
+// 		}
+// 		fmt.Println("Before")
+// 		for i := uint64(0); i < 3; i++ {
+// 			fmt.Println(valueVec[i])
+// 			extractField(valueVec, i, valOffset, "Value")
+// 		}
+
+// 		status = true
+// 		var loc uint64
+
+// 		for k := uint64(0); k < K; k++ {
+// 			loc = indexVec[k]
+// 			// status = status && vcs.Verify(digest, loc, valueMap[loc], proofVec[k])
+// 			status = status && vcs.Verify(digest, loc, valueVec[k], proofVec[k])
+// 			if status == false {
+// 				fmt.Println("Error!")
+// 			} else {
+// 				fmt.Println("\033[32mVerification Passed ✅\033[0m")
+// 			}
+// 		}
+
+// 		status = true
+// 		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+// 		if status == false {
+// 			fmt.Println("Fast Verification Failed")
+// 		} else {
+// 			fmt.Println("\033[32mFast Verification Passed ✅\033[0m")
+// 		}
+
+// 		// Make some changes to the vector positions.
+// 		for k := uint64(0); k < K; k++ {
+// 			loc := indexVec[k]
+// 			delta := deltaVec[k]
+// 			// Alter for some constant lambda
+// 			vcs.UpdateProofTree(loc, delta)
+// 		}
+
+// 		// Update the value vector
+// 		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+// 		// Get latest proofs
+// 		for k := uint64(0); k < K; k++ {
+// 			proofVec[k] = vcs.GetProofPath(indexVec[k])
+// 		}
+
+// 		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+// 		status = true
+// 		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+// 		if status == false {
+// 			fmt.Println("UpdateProofTree Failed")
+// 		} else {
+// 			fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
+// 		}
+
+// 		vcs.UpdateProofTreeBulk(indexVec, deltaVec)
+
+// 		// Update the value vector
+// 		valueVec = SecondaryStateUpdate(indexVec, deltaVec, valueVec)
+
+// 		// Get latest proofs
+// 		for k := uint64(0); k < K; k++ {
+// 			proofVec[k] = vcs.GetProofPath(indexVec[k])
+// 		}
+// 		digest = vcs.UpdateComVec(digest, indexVec, deltaVec)
+
+// 		status = true
+// 		status, _ = vcs.VerifyMemoized(digest, indexVec, valueVec, proofVec)
+// 		if status == false {
+// 			fmt.Println("UpdateProofTreeBulk Failed")
+// 		} else {
+// 			fmt.Println("\033[32mUpdateProofTreeBulk Passed ✅\033[0m")
+// 		}
+// 		fmt.Println(vc.SEP)
+// 		fmt.Println("Transaction Data:")
+// 		for account, transactions := range transactionData {
+// 			fmt.Printf("Account %d: %v\n", account, transactions)
+// 		}
+// 		fmt.Println(vc.SEP)
+
+// 		fmt.Println(vc.SEP)
+// 		printFullState(aFr)
+// 		fmt.Println(vc.SEP)
+
+// 		fmt.Println("After")
+// 		for i := uint64(0); i < 3; i++ {
+// 			fmt.Println(valueVec[i])
+// 			extractField(valueVec, i, valOffset, "Value")
+// 		}
+
+// 		fmt.Println(vc.SEP)
+// 		fmt.Println(vc.SEP)
+// 	}
+// }
+
+// This function prints the full state of an account.
+func printFullState(aFr []mcl.Fr) {
+	fmt.Println("Full State Snapshot:")
+	for i := uint64(0); i < uint64(len(aFr)); i++ {
+		fmt.Printf("Account[%d]: ", i)
+		extractField(aFr, i, addrOffset, "Address")
+		extractField(aFr, i, nonceOffset, "Nonce")
+		extractField(aFr, i, valOffset, "Value")
+		fmt.Println("---")
+	}
+}
+
+// This function extracts a field from the state vector.
+// The structure of the state vector is [address, nonce, value, padding].
+//                                       21       21     21     1
+func extractField(aFr []mcl.Fr, index uint64, offset int, fieldName string) {
+	var mask int64 = ((1 << 21) - 1) << offset
+
+	val, err := strconv.ParseInt(aFr[index].GetString(10), 10, 64)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Printf("%s: %d\n", fieldName, (val&mask)>>offset)
+}
+
+// This function initializes the VCS and generates a random vector.
+func initializeVCS(L uint8, K uint64, N uint64) (vc.VCS, []mcl.Fr) {
+	vcs := vc.VCS{}
+	vcs.KeyGenLoad(16, L, FOLDER, K)
+	aFr := vc.GenerateVector(N)
+	vc.SaveVector(N, aFr)
+	vcs.OpenAll(aFr)
+	return vcs, aFr
 }
 
 func SecondaryStateUpdate(indexVec []uint64, deltaVec []mcl.Fr, valueVec []mcl.Fr) []mcl.Fr {
@@ -329,10 +452,10 @@ func BenchmarkVCSCommit(L uint8, txnLimit uint64) string {
 	return out
 }
 
-func hyperGenerateKeys(L uint8, fake bool) *vcs.VCS {
+func hyperGenerateKeys(L uint8, fake bool) *vc.VCS {
 
 	N := uint64(1) << L
-	vcs := vcs.VCS{}
+	vcs := vc.VCS{}
 
 	fmt.Println("L:", L, "N:", N)
 	folderPath := fmt.Sprintf("pkvk-%02d", L)
@@ -346,10 +469,10 @@ func hyperGenerateKeys(L uint8, fake bool) *vcs.VCS {
 	return &vcs
 }
 
-func hyperLoadKeys(L uint8) *vcs.VCS {
+func hyperLoadKeys(L uint8) *vc.VCS {
 
 	folderPath := fmt.Sprintf("pkvk-%02d", L)
-	vcs := vcs.VCS{}
+	vcs := vc.VCS{}
 
 	vcs.KeyGenLoad(16, L, folderPath, 128)
 
