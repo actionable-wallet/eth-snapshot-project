@@ -32,7 +32,7 @@ type RoundInfo struct {
 
 func main() {
 	// Initialization of state vector
-	transactionRoundNum := flag.Uint64("R", 2, "Number of transaction rounds")
+	transactionRoundNum := flag.Uint64("R", 11, "Number of transaction rounds")
 	transactionNum := flag.Uint64("K", 10, "Number of transactions per round")
 	stateVecSize := flag.Uint64("N", 4, "State vector size (must be a power of 2)")
 	flag.Parse()
@@ -44,7 +44,7 @@ func main() {
 	fmt.Println(vc.SEP)
 
 	// Create arrays to store round information and snapshots
-	history := make([]RoundInfo, *transactionRoundNum)
+	txnData := make([]RoundInfo, *transactionRoundNum)
 	snapshots := make([]*algorithm.Slice, 0)
 
 	// Save initial slice
@@ -99,13 +99,10 @@ func main() {
 
 		// Generate and store commitment for this round
 		vcs.OpenAll(currentState)
-		commitment1 := vcs.Commit(currentState, uint64(stateVecLevel))
-		roundInfo.Commitment = commitment1
-		fmt.Printf("Commitment1: %s\n", commitment1.GetString(16))
-		fmt.Printf("Size of the state in simulation: %d\n", len(currentState))
-		fmt.Printf("State in simulation: %v\n", currentState)
+		commitment := vcs.Commit(currentState, uint64(stateVecLevel))
+		roundInfo.Commitment = commitment
 
-		history[i] = roundInfo
+		txnData[i] = roundInfo
 		
 		// Print transaction data for this round
 		fmt.Printf("\n=== Transaction Data for Round %d ===\n", i+1)
@@ -245,7 +242,7 @@ func main() {
 		fmt.Printf("\nApplying transactions from round %d to %d...\n", snapshotRound+1, targetRound)
 		
 		for i := snapshotRound; i < targetRound; i++ {
-			roundInfo := history[i]
+			roundInfo := txnData[i]
 			algorithm.UpdateAccount(&vcs, recoveredSlice.State, roundInfo.IndexVec, roundInfo.DeltaVec, int(i+1))
 		}
 	}
@@ -253,12 +250,16 @@ func main() {
 	// Generate commitment for the recovered state
 	vcs.OpenAll(recoveredSlice.State)
 	recoveredCommitment := vcs.Commit(recoveredSlice.State, uint64(stateVecLevel))
-	fmt.Printf("Recovered State: %v\n", recoveredSlice.State)
-	fmt.Printf("Size in reconstruction: %d\n", len(recoveredSlice.State))
-	fmt.Printf("\nRecovered State Commitment: %s\n", recoveredCommitment.GetString(16))
 	
 	// Compare with original commitment
-	originalCommitment := history[targetRound].Commitment
+	var originalCommitment mcl.G1
+	if targetRound == 0 {
+		// For round 0, use the initial slice's commitment
+		originalCommitment = snapshots[0].Commitment
+	} else {
+		// For other rounds, use the commitment from the previous round
+		originalCommitment = txnData[targetRound-1].Commitment
+	}
 	fmt.Printf("Original State Commitment: %s\n", originalCommitment.GetString(16))
 	
 	// Compare commitments
@@ -303,10 +304,12 @@ func getProofs(vcs *vc.VCS, stateSize uint64) [][]mcl.G1 {
 func findCLoestSlice(vcs *vc.VCS, snapshots []*algorithm.Slice, targetRound uint64) (algorithm.Slice, uint64) {
 	// Find the nearest snapshot
 	var snapshotRound uint64
-	if targetRound < SNAPSHOT_INTERVAL {
+	if targetRound == 0 {
+		snapshotRound = 0
+	} else if targetRound < SNAPSHOT_INTERVAL {
 		snapshotRound = 0
 	} else {
-		snapshotRound = (targetRound / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL
+		snapshotRound = ((targetRound - 1) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL
 	}
 
 	fmt.Printf("\nRecovering state for round %d from snapshot at round %d...\n", targetRound, snapshotRound)
@@ -334,7 +337,3 @@ func findCLoestSlice(vcs *vc.VCS, snapshots []*algorithm.Slice, targetRound uint
 	fmt.Println(strings.Repeat("-", 80))
 	return recoveredSlice, snapshotRound
 }
-
-
-// State in simulation: [{{[9757882496981465063 16147018245230304707 9464166460734283293 6770212434155248197]}} {{[909703734125130225 5549250435265645924 2093284878405530854 7103242667683162036]}} {{[10388930475288880583 16900508424523141944 13925719336733179066 7691567378008926482]}} {{[1700023397677270800 4070597171181911962 2618717649249380172 4141323320111958320]}}]
-//     Recovered State: [{{[9757882496981465063 16147018245230304707 9464166460734283293 6770212434155248197]}} {{[909703734125130225 5549250435265645924 2093284878405530854 7103242667683162036]}} {{[10388930475288880583 16900508424523141944 13925719336733179066 7691567378008926482]}} {{[1700023397677270800 4070597171181911962 2618717649249380172 4141323320111958320]}}]
