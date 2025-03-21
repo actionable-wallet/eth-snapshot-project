@@ -32,7 +32,7 @@ type RoundInfo struct {
 
 func main() {
 	// Initialization of state vector
-	transactionRoundNum := flag.Uint64("R", 11, "Number of transaction rounds")
+	transactionRoundNum := flag.Uint64("R", 20, "Number of transaction rounds")
 	transactionNum := flag.Uint64("K", 10, "Number of transactions per round")
 	stateVecSize := flag.Uint64("N", 4, "State vector size (must be a power of 2)")
 	flag.Parse()
@@ -44,7 +44,7 @@ func main() {
 	fmt.Println(vc.SEP)
 
 	// Create arrays to store round information and snapshots
-	txnData := make([]RoundInfo, *transactionRoundNum)
+	txnData := make([]RoundInfo, *transactionRoundNum + 1)
 	snapshots := make([]*algorithm.Slice, 0)
 
 	// Save initial slice
@@ -102,7 +102,7 @@ func main() {
 		commitment := vcs.Commit(currentState, uint64(stateVecLevel))
 		roundInfo.Commitment = commitment
 
-		txnData[i] = roundInfo
+		txnData[i + 1] = roundInfo
 		
 		// Print transaction data for this round
 		fmt.Printf("\n=== Transaction Data for Round %d ===\n", i+1)
@@ -181,9 +181,13 @@ func main() {
 		if (i + 1) % SNAPSHOT_INTERVAL == 0 {
 			fmt.Printf("\nCreating snapshot for Round %d...\n", i+1)
 			
-			// Create and save snapshot using current state
-			vcs.OpenAll(currentState)
-			snapshot := algorithm.NewSlice(currentState, getProofs(&vcs, *stateVecSize), vcs.Commit(currentState, uint64(stateVecLevel)))
+			// Create a new state array for the snapshot
+			snapshotState := make([]mcl.Fr, len(currentState))
+			copy(snapshotState, currentState)
+			
+			// Create and save snapshot using the new state array
+			vcs.OpenAll(snapshotState)
+			snapshot := algorithm.NewSlice(snapshotState, getProofs(&vcs, *stateVecSize), vcs.Commit(snapshotState, uint64(stateVecLevel)))
 			snapshots = append(snapshots, snapshot)
 			fmt.Printf("Saved state snapshot (Round %d)\n", i + 1)
 			
@@ -239,11 +243,15 @@ func main() {
 
 	// Apply transactions from the snapshot round to the target round
 	if targetRound > snapshotRound {
-		fmt.Printf("\nApplying transactions from round %d to %d...\n", snapshotRound+1, targetRound)
+		// snapshotRound is a multiple of SNAPSHOT_INTERVAL
+		fmt.Printf("\nApplying transactions from round %d to %d...\n", snapshotRound, targetRound)
 		
-		for i := snapshotRound; i < targetRound; i++ {
-			roundInfo := txnData[i]
-			algorithm.UpdateAccount(&vcs, recoveredSlice.State, roundInfo.IndexVec, roundInfo.DeltaVec, int(i+1))
+		if snapshotRound != targetRound {
+			for i := snapshotRound + 1; i <= targetRound; i++ {
+				fmt.Println("apply transaction from round", i)
+				roundInfo := txnData[i]
+				algorithm.UpdateAccount(&vcs, recoveredSlice.State, roundInfo.IndexVec, roundInfo.DeltaVec, int(i+1))
+			}
 		}
 	}
 
@@ -258,9 +266,8 @@ func main() {
 		originalCommitment = snapshots[0].Commitment
 	} else {
 		// For other rounds, use the commitment from the previous round
-		originalCommitment = txnData[targetRound-1].Commitment
+		originalCommitment = txnData[targetRound].Commitment
 	}
-	fmt.Printf("Original State Commitment: %s\n", originalCommitment.GetString(16))
 	
 	// Compare commitments
 	if recoveredCommitment.IsEqual(&originalCommitment) {
@@ -302,12 +309,28 @@ func getProofs(vcs *vc.VCS, stateSize uint64) [][]mcl.G1 {
 }
 
 func findCLoestSlice(vcs *vc.VCS, snapshots []*algorithm.Slice, targetRound uint64) (algorithm.Slice, uint64) {
+	fmt.Println("\n=== Available Snapshots ===")
+	for i, snapshot := range snapshots {
+		fmt.Printf("\nSnapshot %d: Commitment = %v\n", i*SNAPSHOT_INTERVAL, snapshot.Commitment)
+		fmt.Println(strings.Repeat("-", 80))
+
+		for j := uint64(0); j < vcs.N; j++ {
+			addr := snapshot.ExtractField(j, addrOffset)
+			nonce := snapshot.ExtractField(j, nonceOffset)
+			value := snapshot.ExtractField(j, valOffset)
+
+			fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n",
+				j, addr, nonce, value)
+		}
+		fmt.Println(strings.Repeat("-", 80))
+	}
+
 	// Find the nearest snapshot
 	var snapshotRound uint64
-	if targetRound == 0 {
+	if targetRound < SNAPSHOT_INTERVAL {
 		snapshotRound = 0
-	} else if targetRound < SNAPSHOT_INTERVAL {
-		snapshotRound = 0
+	} else if targetRound % SNAPSHOT_INTERVAL == 0 {
+		snapshotRound = targetRound
 	} else {
 		snapshotRound = ((targetRound - 1) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL
 	}
@@ -316,12 +339,8 @@ func findCLoestSlice(vcs *vc.VCS, snapshots []*algorithm.Slice, targetRound uint
 
 	// Get the snapshot
 	var recoveredSlice algorithm.Slice
-	if snapshotRound == 0 {
-		recoveredSlice = *snapshots[0]
-	} else {
-		snapshotIndex := snapshotRound / SNAPSHOT_INTERVAL
-		recoveredSlice = *snapshots[snapshotIndex]
-	}
+	snapshotIndex := snapshotRound / SNAPSHOT_INTERVAL
+	recoveredSlice = *snapshots[snapshotIndex]
 
 	// Print initial state from snapshot
 	fmt.Printf("\nInitial State from Snapshot at Round %d:\n", snapshotRound)
