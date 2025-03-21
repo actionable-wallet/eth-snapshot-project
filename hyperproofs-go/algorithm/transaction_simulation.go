@@ -110,12 +110,12 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 	}
 
 	// Display transaction history
-	fmt.Printf("\n=== Transaction History (Round %d) ===\n", round)
+	fmt.Printf("\n=== Transaction History (Round %d) ===\n", round - 1)
 	for account, txs := range transactionHistory {
 		fmt.Printf("\nAccount %d transaction history:\n", account)
 		for _, tx := range txs {
 			fmt.Printf("  Round %d: Value Change %d, Nonce %d\n",
-				tx.Round, tx.ValueDelta, tx.Nonce)
+				tx.Round - 1, tx.ValueDelta, tx.Nonce)
 		}
 	}
 

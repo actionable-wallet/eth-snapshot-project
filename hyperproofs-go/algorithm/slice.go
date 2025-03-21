@@ -1,9 +1,19 @@
 package algorithm
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/alinush/go-mcl"
+	vc "github.com/hyperproofs/hyperproofs-go/vcs"
+)
+
+const (
+	SNAPSHOT_INTERVAL = 5  // Create a snapshot every 5 rounds
+	ADDR_OFFSET  int = 43
+	NONCE_OFFSET int = 22
+	VAL_OFFSET   int = 1
 )
 
 // Slice represents a blockchain state slice containing account states, proofs, and commitment
@@ -48,18 +58,34 @@ func (s *Slice) ExtractField(accountIndex uint64, offset int) int64 {
 	return (val & mask) >> offset
 }
 
-// GetAccountState retrieves the state of a specified account
-func (s *Slice) GetAccountState(accountIndex uint64) *mcl.Fr {
-	if accountIndex >= uint64(len(s.State)) {
-		return nil
+// This function prints the information of all slices
+func PrintAllSliceInfo(vcs *vc.VCS, snapshots []*Slice) {
+	fmt.Println("\n=== Available Snapshots ===")
+	for i, snapshot := range snapshots {
+		fmt.Printf("\nSnapshot %d: Commitment = %v\n", i*SNAPSHOT_INTERVAL, snapshot.Commitment)
+		fmt.Println(strings.Repeat("-", 80))
+
+		for j := uint64(0); j < vcs.N; j++ {
+			addr := snapshot.ExtractField(j, ADDR_OFFSET)
+			nonce := snapshot.ExtractField(j, NONCE_OFFSET)
+			value := snapshot.ExtractField(j, VAL_OFFSET)
+
+			fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n",
+				j, addr, nonce, value)
+		}
+		fmt.Println(strings.Repeat("-", 80))
 	}
-	return &s.State[accountIndex]
 }
 
-// GetAccountProof retrieves the proof of a specified account
-func (s *Slice) GetAccountProof(accountIndex uint64) []mcl.G1 {
-	if accountIndex >= uint64(len(s.Proofs)) {
-		return nil
+func PrintSliceInfo(vcs *vc.VCS, snapshot *Slice) {
+	fmt.Println(strings.Repeat("-", 80))
+	for i := uint64(0); i < vcs.N; i++ {
+		addr := snapshot.ExtractField(i, ADDR_OFFSET)
+		nonce := snapshot.ExtractField(i, NONCE_OFFSET)
+		value := snapshot.ExtractField(i, VAL_OFFSET)
+		
+		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n", 
+			i, addr, nonce, value)
 	}
-	return s.Proofs[accountIndex]
+	fmt.Println(strings.Repeat("-", 80))
 }

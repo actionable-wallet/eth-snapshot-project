@@ -14,10 +14,6 @@ import (
 
 const (
 	FOLDER = "../../pkvk-02"
-	SNAPSHOT_INTERVAL = 5  // Create a snapshot every 5 rounds
-	addrOffset  int = 43
-	nonceOffset int = 22
-	valOffset   int = 1
 )
 
 // RoundInfo stores vectors used in each round
@@ -60,9 +56,9 @@ func main() {
 	// Print initial state
 	fmt.Println("\n=== Initial State Information ===")
 	for j := uint64(0); j < *stateVecSize; j++ {
-		address := initialSlice.ExtractField(j, addrOffset)
-		nonce := initialSlice.ExtractField(j, nonceOffset)
-		value := initialSlice.ExtractField(j, valOffset)
+		address := initialSlice.ExtractField(j, algorithm.ADDR_OFFSET)
+		nonce := initialSlice.ExtractField(j, algorithm.NONCE_OFFSET)
+		value := initialSlice.ExtractField(j, algorithm.VAL_OFFSET)
 		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n",
 			j, address, nonce, value)
 	}
@@ -124,9 +120,9 @@ func main() {
 			var currentAddress, currentNonce, currentValue int64
 			if len(snapshots) > 0 {
 				latestSnapshot := snapshots[len(snapshots)-1]
-				currentAddress = latestSnapshot.ExtractField(accountIndex, addrOffset)
-				currentNonce = latestSnapshot.ExtractField(accountIndex, nonceOffset)
-				currentValue = latestSnapshot.ExtractField(accountIndex, valOffset)
+				currentAddress = latestSnapshot.ExtractField(accountIndex, algorithm.ADDR_OFFSET)
+				currentNonce = latestSnapshot.ExtractField(accountIndex, algorithm.NONCE_OFFSET)
+				currentValue = latestSnapshot.ExtractField(accountIndex, algorithm.VAL_OFFSET)
 			}
 			
 			fmt.Printf("\n  Account[%d] - Address: %d, Current Nonce: %d, Current Value: %d\n", 
@@ -143,9 +139,9 @@ func main() {
 				}
 				
 				// Extract fields from delta
-				addressChange := (deltaVal >> addrOffset) & ((1 << 21) - 1)
-				nonceChange := (deltaVal >> nonceOffset) & ((1 << 21) - 1)
-				valueChange := (deltaVal >> valOffset) & ((1 << 21) - 1)
+				addressChange := (deltaVal >> algorithm.ADDR_OFFSET) & ((1 << 21) - 1)
+				nonceChange := (deltaVal >> algorithm.NONCE_OFFSET) & ((1 << 21) - 1)
+				valueChange := (deltaVal >> algorithm.VAL_OFFSET) & ((1 << 21) - 1)
 				
 				// Parse value (the account state before transaction)
 				valueVal, err := strconv.ParseInt(roundInfo.ValueVec[txIndex].GetString(10), 10, 64)
@@ -155,9 +151,9 @@ func main() {
 				}
 				
 				// Extract fields from current state
-				beforeAddress := (valueVal >> addrOffset) & ((1 << 21) - 1)
-				beforeNonce := (valueVal >> nonceOffset) & ((1 << 21) - 1)
-				beforeValue := (valueVal >> valOffset) & ((1 << 21) - 1)
+				beforeAddress := (valueVal >> algorithm.ADDR_OFFSET) & ((1 << 21) - 1)
+				beforeNonce := (valueVal >> algorithm.NONCE_OFFSET) & ((1 << 21) - 1)
+				beforeValue := (valueVal >> algorithm.VAL_OFFSET) & ((1 << 21) - 1)
 				
 				// Calculate after state
 				afterAddress := beforeAddress
@@ -178,7 +174,7 @@ func main() {
 		}
 		
 		// Check if this is a snapshot round
-		if (i + 1) % SNAPSHOT_INTERVAL == 0 {
+		if (i + 1) % algorithm.SNAPSHOT_INTERVAL == 0 {
 			fmt.Printf("\nCreating snapshot for Round %d...\n", i+1)
 			
 			// Create a new state array for the snapshot
@@ -201,17 +197,17 @@ func main() {
 			}
 			
 			for j := uint64(0); j < *stateVecSize; j++ {
-				address := snapshot.ExtractField(j, addrOffset)
-				nonce := snapshot.ExtractField(j, nonceOffset)
-				value := snapshot.ExtractField(j, valOffset)
+				address := snapshot.ExtractField(j, algorithm.ADDR_OFFSET)
+				nonce := snapshot.ExtractField(j, algorithm.NONCE_OFFSET)
+				value := snapshot.ExtractField(j, algorithm.VAL_OFFSET)
 				
 				fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d", 
 					j, address, nonce, value)
 				
 				// If there's a previous snapshot, show state changes
 				if prevSnapshot != nil {
-					prevNonce := prevSnapshot.ExtractField(j, nonceOffset)
-					prevValue := prevSnapshot.ExtractField(j, valOffset)
+					prevNonce := prevSnapshot.ExtractField(j, algorithm.NONCE_OFFSET)
+					prevValue := prevSnapshot.ExtractField(j, algorithm.VAL_OFFSET)
 					
 					nonceDiff := nonce - prevNonce
 					valueDiff := value - prevValue
@@ -280,9 +276,9 @@ func main() {
 	fmt.Printf("\nRecovered State at Round %d:\n", targetRound)
 	fmt.Println(strings.Repeat("-", 80))
 	for i := uint64(0); i < vcs.N; i++ {
-		addr := recoveredSlice.ExtractField(i, addrOffset)
-		nonce := recoveredSlice.ExtractField(i, nonceOffset)
-		value := recoveredSlice.ExtractField(i, valOffset)
+		addr := recoveredSlice.ExtractField(i, algorithm.ADDR_OFFSET)
+		nonce := recoveredSlice.ExtractField(i, algorithm.NONCE_OFFSET)
+		value := recoveredSlice.ExtractField(i, algorithm.VAL_OFFSET)
 		
 		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n", 
 			i, addr, nonce, value)
@@ -309,50 +305,19 @@ func getProofs(vcs *vc.VCS, stateSize uint64) [][]mcl.G1 {
 }
 
 func findCLoestSlice(vcs *vc.VCS, snapshots []*algorithm.Slice, targetRound uint64) (algorithm.Slice, uint64) {
-	fmt.Println("\n=== Available Snapshots ===")
-	for i, snapshot := range snapshots {
-		fmt.Printf("\nSnapshot %d: Commitment = %v\n", i*SNAPSHOT_INTERVAL, snapshot.Commitment)
-		fmt.Println(strings.Repeat("-", 80))
-
-		for j := uint64(0); j < vcs.N; j++ {
-			addr := snapshot.ExtractField(j, addrOffset)
-			nonce := snapshot.ExtractField(j, nonceOffset)
-			value := snapshot.ExtractField(j, valOffset)
-
-			fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n",
-				j, addr, nonce, value)
-		}
-		fmt.Println(strings.Repeat("-", 80))
-	}
+	algorithm.PrintAllSliceInfo(vcs, snapshots)
 
 	// Find the nearest snapshot
-	var snapshotRound uint64
-	if targetRound < SNAPSHOT_INTERVAL {
-		snapshotRound = 0
-	} else if targetRound % SNAPSHOT_INTERVAL == 0 {
-		snapshotRound = targetRound
-	} else {
-		snapshotRound = ((targetRound - 1) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL
-	}
+	snapshotRound := (targetRound / algorithm.SNAPSHOT_INTERVAL) * algorithm.SNAPSHOT_INTERVAL
 
 	fmt.Printf("\nRecovering state for round %d from snapshot at round %d...\n", targetRound, snapshotRound)
 
 	// Get the snapshot
-	var recoveredSlice algorithm.Slice
-	snapshotIndex := snapshotRound / SNAPSHOT_INTERVAL
-	recoveredSlice = *snapshots[snapshotIndex]
+	recoveredSlice := *snapshots[snapshotRound / algorithm.SNAPSHOT_INTERVAL]
 
 	// Print initial state from snapshot
 	fmt.Printf("\nInitial State from Snapshot at Round %d:\n", snapshotRound)
-	fmt.Println(strings.Repeat("-", 80))
-	for i := uint64(0); i < vcs.N; i++ {
-		addr := recoveredSlice.ExtractField(i, addrOffset)
-		nonce := recoveredSlice.ExtractField(i, nonceOffset)
-		value := recoveredSlice.ExtractField(i, valOffset)
-		
-		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n", 
-			i, addr, nonce, value)
-	}
-	fmt.Println(strings.Repeat("-", 80))
+	algorithm.PrintSliceInfo(vcs, &recoveredSlice)
+
 	return recoveredSlice, snapshotRound
 }
