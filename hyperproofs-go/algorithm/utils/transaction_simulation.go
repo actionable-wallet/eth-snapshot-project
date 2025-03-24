@@ -1,4 +1,4 @@
-package algorithm
+package utils
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ const (
 
 // TransactionRecord represents a single transaction in the system
 type TransactionRecord struct {
-	Round        int    	// The round number when this transaction occurred
+	StateIndex        int    	// The round number when this transaction occurred
 	AccountIndex uint64 	// The account that this transaction belongs to
 	ValueDelta   int    	// The change in value (can be positive or negative)
 	Nonce        int64  	// Transaction sequence number for the account
@@ -70,7 +70,7 @@ func GenerateTransactionVectors(vcs *vc.VCS, aFr []mcl.Fr, transactionNum uint64
 }
 
 // UpdateAccount applies the transaction vectors to update the system state
-func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.Fr, round int) {
+func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.Fr, stateIndex int) {
 	transactionNum := uint64(len(indexVec))
 	
 	// Store transaction history for each account
@@ -86,7 +86,7 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 		
 		// Create transaction record
 		tx := TransactionRecord{
-			Round:        round,
+			StateIndex: stateIndex,
 			AccountIndex: accountIndex,
 			ValueDelta:   int(valDelta),
 			Nonce:        1,
@@ -100,9 +100,9 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 	}
 
 	// Update the state
-	for i := uint64(0); i < transactionNum; i++ {
-		vcs.UpdateProofTree(indexVec[i], deltaVec[i])
-	}
+	// for i := uint64(0); i < transactionNum; i++ {
+	// 	vcs.UpdateProofTree(indexVec[i], deltaVec[i])
+	// }
 
 	// Update values
 	for i := uint64(0); i < transactionNum; i++ {
@@ -110,12 +110,12 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 	}
 
 	// Display transaction history
-	fmt.Printf("\n=== Transaction History (Round %d) ===\n", round - 1)
+	fmt.Printf("\n=== Transaction History (State %d) ===\n", stateIndex - 1)
 	for account, txs := range transactionHistory {
 		fmt.Printf("\nAccount %d transaction history:\n", account)
 		for _, tx := range txs {
-			fmt.Printf("  Round %d: Value Change %d, Nonce %d\n",
-				tx.Round - 1, tx.ValueDelta, tx.Nonce)
+			fmt.Printf("  State %d: Value Change %d, Nonce %d\n",
+				tx.StateIndex - 1, tx.ValueDelta, tx.Nonce)
 		}
 	}
 

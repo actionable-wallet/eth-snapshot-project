@@ -1,4 +1,4 @@
-package algorithm
+package utils
 
 import (
 	"fmt"
@@ -8,27 +8,6 @@ import (
 	"github.com/alinush/go-mcl"
 	vc "github.com/hyperproofs/hyperproofs-go/vcs"
 )
-
-const (
-	SNAPSHOT_INTERVAL = 5  // Create a snapshot every 5 rounds
-	ADDR_OFFSET  int = 43
-	NONCE_OFFSET int = 22
-	VAL_OFFSET   int = 1
-)
-
-// Slice represents a blockchain state slice containing account states, proofs, and commitment
-type Slice struct {
-	// State vector containing all account states
-	// Each account state contains: address(21 bits), nonce(21 bits), value(21 bits), and padding(1 bit)
-	State []mcl.Fr
-
-	// Proof vector for all accounts
-	// Each account corresponds to a proof path
-	Proofs [][]mcl.G1
-
-	// Commitment value of the state
-	Commitment mcl.G1
-}
 
 // NewSlice creates a new slice
 func NewSlice(state []mcl.Fr, proofs [][]mcl.G1, commitment mcl.G1) *Slice {
@@ -62,7 +41,7 @@ func (s *Slice) ExtractField(accountIndex uint64, offset int) int64 {
 func PrintAllSliceInfo(vcs *vc.VCS, snapshots []*Slice) {
 	fmt.Println("\n=== Available Snapshots ===")
 	for i, snapshot := range snapshots {
-		fmt.Printf("\nSnapshot %d: Commitment = %v\n", i*SNAPSHOT_INTERVAL, snapshot.Commitment)
+		fmt.Printf("\nSnapshot %d: Commitment = %v\n", i*SLICING_INTERVAL, snapshot.Commitment)
 		fmt.Println(strings.Repeat("-", 80))
 
 		for j := uint64(0); j < vcs.N; j++ {
@@ -77,7 +56,7 @@ func PrintAllSliceInfo(vcs *vc.VCS, snapshots []*Slice) {
 	}
 }
 
-func PrintSliceInfo(vcs *vc.VCS, snapshot *Slice) {
+func PrintAccountInfo(vcs *vc.VCS, snapshot *Slice) {
 	fmt.Println(strings.Repeat("-", 80))
 	for i := uint64(0); i < vcs.N; i++ {
 		addr := snapshot.ExtractField(i, ADDR_OFFSET)
@@ -88,4 +67,23 @@ func PrintSliceInfo(vcs *vc.VCS, snapshot *Slice) {
 			i, addr, nonce, value)
 	}
 	fmt.Println(strings.Repeat("-", 80))
+}
+
+// This function finds the nearest slice to the target state
+func FindCLoestSlice(vcs *vc.VCS, slices []*Slice, targetState uint64) (Slice, uint64) {
+	PrintAllSliceInfo(vcs, slices)
+
+	// Find the nearest slice index
+	sliceIndex := (targetState / SLICING_INTERVAL) * SLICING_INTERVAL
+
+	fmt.Printf("\nRecovering state %d from the slice at state %d...\n", targetState, sliceIndex)
+
+	// Get the slice
+	closestSlice := *slices[sliceIndex / SLICING_INTERVAL]
+
+	// Print account information
+	fmt.Printf("\nInitial account information at state %d:\n", sliceIndex)
+	PrintAccountInfo(vcs, &closestSlice)
+
+	return closestSlice, sliceIndex
 }
