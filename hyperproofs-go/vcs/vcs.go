@@ -2,6 +2,7 @@ package vcs
 
 import (
 	//"fmt"
+
 	"github.com/alinush/go-mcl"
 	"github.com/hyperproofs/gipa-go/batch"
 	"github.com/hyperproofs/gipa-go/cm"
