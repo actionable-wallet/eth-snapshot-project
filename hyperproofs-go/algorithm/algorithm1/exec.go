@@ -59,11 +59,18 @@ func StateReconstruct(vcs *vc.VCS, slices []*utils.Slice, txnData []utils.StateI
 		targetCommitment = vcs.UpdateComVec(txnData[sliceIndex].Commitment, indexVec, deltaVec)
 		fmt.Println("TargetCommitment", targetCommitment)
 
-		status, _ := vcs.VerifyMemoized(targetCommitment, indexVec, valueVec, proofVec)
-		if status {
-			fmt.Println("\033[32mUpdateProofTree Passed ✅\033[0m")
-		} else {
-			fmt.Println("\033[31mUpdateProofTree Failed ❌\033[0m")
+		for k := uint64(0); k < uint64(len(indexVec)); k++ {
+			loc := indexVec[k]
+			status := vcs.Verify(targetCommitment, loc, valueVec[k], proofVec[k])
+			fmt.Println("Commitment", targetCommitment)
+			fmt.Println("Index", loc)
+			fmt.Println("Value", valueVec[k])
+			fmt.Println("Proof", proofVec[k])
+			if !status {
+				fmt.Println("Error!")
+			} else {
+				fmt.Println("\033[32mVerification Passed ✅\033[0m")
+			}
 		}
 	}
 	// End of prover
