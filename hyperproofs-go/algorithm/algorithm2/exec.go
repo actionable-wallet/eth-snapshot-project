@@ -55,7 +55,7 @@ func StateProof(vcs *vc.VCS, slices []*utils.Slice, txnData []utils.StateInfo, t
 
 	// 4. Get account information and proof
 	// 4.1 Get account information
-	accountInfo := recoveredState[accountIndex]
+	// accountInfo := recoveredState[accountIndex]
 	
 	// 4.2 Get account delta
 	var accountDelta mcl.Fr
@@ -67,7 +67,7 @@ func StateProof(vcs *vc.VCS, slices []*utils.Slice, txnData []utils.StateInfo, t
 	}
 
 	// 4.3 Get base proof
-	baseProof := closestSlice.Proofs[accountIndex]
+	// baseProof := closestSlice.Proofs[accountIndex]
 
 	// 4.4 Update proof
 
@@ -79,6 +79,7 @@ func StateProof(vcs *vc.VCS, slices []*utils.Slice, txnData []utils.StateInfo, t
 	// 	Delta:     []mcl.Fr{accountDelta},
 	// 	BaseProof: baseProof,
 	// }
+	return nil
 }
 
 // VerifyStateProof implements the Verifier section
