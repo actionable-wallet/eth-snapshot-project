@@ -19,7 +19,7 @@ const (
 
 func main() {
 	// Initialization of state vector
-	transactionRoundNum := flag.Uint64("R", 5, "Number of state transitions")
+	transactionRoundNum := flag.Uint64("R", 10, "Number of state transitions")
 	transactionNum := flag.Uint64("K", 10, "Number of transactions per state")
 	stateVecSize := flag.Uint64("N", 4, "State vector size (must be a power of 2)")
 	flag.Parse()
@@ -39,6 +39,12 @@ func main() {
 	initialSlice := utils.NewSlice(aFr, getProofs(&vcs, *stateVecSize), vcs.Commit(aFr, uint64(stateVecLevel)))
 	snapshots = append(snapshots, initialSlice)
 	fmt.Printf("Saved initial state snapshot (Round 0)\n")
+	
+	// Store initial state information in txnData
+	txnData[0] = utils.StateInfo{
+		StateIndex: 0,
+		Commitment: initialSlice.Commitment,
+	}
 	
 	// Create a copy of initial state for tracking
 	currentState := make([]mcl.Fr, len(aFr))
