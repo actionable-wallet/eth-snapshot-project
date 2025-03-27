@@ -56,6 +56,7 @@ func PrintAllSliceInfo(vcs *vc.VCS, snapshots []*Slice) {
 	}
 }
 
+// This function prints the information of an account
 func PrintAccountInfo(vcs *vc.VCS, snapshot *Slice) {
 	fmt.Println(strings.Repeat("-", 80))
 	for i := uint64(0); i < vcs.N; i++ {

@@ -4,9 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"math"
-	"strings"
+	"strconv"
 
 	"github.com/alinush/go-mcl"
+	"github.com/hyperproofs/hyperproofs-go/algorithm/algorithm1"
 	"github.com/hyperproofs/hyperproofs-go/algorithm/algorithm2"
 	"github.com/hyperproofs/hyperproofs-go/algorithm/utils"
 	vc "github.com/hyperproofs/hyperproofs-go/vcs"
@@ -100,68 +101,68 @@ func main() {
 		}
 		
 		// For each account with transactions
-		// for accountIndex := uint64(0); accountIndex < *stateVecSize; accountIndex++ {
-		// 	txList, exists := accountTransactions[accountIndex]
-		// 	if !exists {
-		// 		continue // Skip accounts without transactions
-		// 	}
+		for accountIndex := uint64(0); accountIndex < *stateVecSize; accountIndex++ {
+			txList, exists := accountTransactions[accountIndex]
+			if !exists {
+				continue // Skip accounts without transactions
+			}
 			
-		// 	// Get account state from latest snapshot
-		// 	var currentAddress, currentNonce, currentValue int64
-		// 	if len(snapshots) > 0 {
-		// 		latestSnapshot := snapshots[len(snapshots)-1]
-		// 		currentAddress = latestSnapshot.ExtractField(accountIndex, utils.ADDR_OFFSET)
-		// 		currentNonce = latestSnapshot.ExtractField(accountIndex, utils.NONCE_OFFSET)
-		// 		currentValue = latestSnapshot.ExtractField(accountIndex, utils.VAL_OFFSET)
-		// 	}
+			// Get account state from latest snapshot
+			var currentAddress, currentNonce, currentValue int64
+			if len(snapshots) > 0 {
+				latestSnapshot := snapshots[len(snapshots)-1]
+				currentAddress = latestSnapshot.ExtractField(accountIndex, utils.ADDR_OFFSET)
+				currentNonce = latestSnapshot.ExtractField(accountIndex, utils.NONCE_OFFSET)
+				currentValue = latestSnapshot.ExtractField(accountIndex, utils.VAL_OFFSET)
+			}
 			
-		// 	fmt.Printf("\n  Account[%d] - Address: %d, Current Nonce: %d, Current Value: %d\n", 
-		// 		accountIndex, currentAddress, currentNonce, currentValue)
-		// 	fmt.Printf("  Transactions in Round %d:\n", i+1)
+			fmt.Printf("\n  Account[%d] - Address: %d, Current Nonce: %d, Current Value: %d\n", 
+				accountIndex, currentAddress, currentNonce, currentValue)
+			fmt.Printf("  Transactions in Round %d:\n", i+1)
 			
-		// 	// For each transaction affecting this account
-		// 	for _, txIndex := range txList {
-		// 		// Parse delta (the change being applied)
-		// 		deltaVal, err := strconv.ParseInt(roundInfo.DeltaVec[txIndex].GetString(10), 10, 64)
-		// 		if err != nil {
-		// 			fmt.Printf("    Transaction #%d: Error parsing delta\n", txIndex)
-		// 			continue
-		// 		}
+			// For each transaction affecting this account
+			for _, txIndex := range txList {
+				// Parse delta (the change being applied)
+				deltaVal, err := strconv.ParseInt(stateInfo.DeltaVec[txIndex].GetString(10), 10, 64)
+				if err != nil {
+					fmt.Printf("    Transaction #%d: Error parsing delta\n", txIndex)
+					continue
+				}
 				
-		// 		// Extract fields from delta
-		// 		addressChange := (deltaVal >> utils.ADDR_OFFSET) & ((1 << 21) - 1)
-		// 		nonceChange := (deltaVal >> utils.NONCE_OFFSET) & ((1 << 21) - 1)
-		// 		valueChange := (deltaVal >> utils.VAL_OFFSET) & ((1 << 21) - 1)
+				// Extract fields from delta
+				addressChange := (deltaVal >> utils.ADDR_OFFSET) & ((1 << 21) - 1)
+				nonceChange := (deltaVal >> utils.NONCE_OFFSET) & ((1 << 21) - 1)
+				valueChange := (deltaVal >> utils.VAL_OFFSET) & ((1 << 21) - 1)
 				
-		// 		// Parse value (the account state before transaction)
-		// 		valueVal, err := strconv.ParseInt(roundInfo.ValueVec[txIndex].GetString(10), 10, 64)
-		// 		if err != nil {
-		// 			fmt.Printf("    Transaction #%d: Error parsing value\n", txIndex)
-		// 			continue
-		// 		}
+				// Parse value (the account state before transaction)
+				valueVal, err := strconv.ParseInt(stateInfo.ValueVec[txIndex].GetString(10), 10, 64)
+				if err != nil {
+					fmt.Printf("    Transaction #%d: Error parsing value\n", txIndex)
+					continue
+				}
 				
-		// 		// Extract fields from current state
-		// 		beforeAddress := (valueVal >> utils.ADDR_OFFSET) & ((1 << 21) - 1)
-		// 		beforeNonce := (valueVal >> utils.NONCE_OFFSET) & ((1 << 21) - 1)
-		// 		beforeValue := (valueVal >> utils.VAL_OFFSET) & ((1 << 21) - 1)
+				// Extract fields from current state
+				beforeAddress := (valueVal >> utils.ADDR_OFFSET) & ((1 << 21) - 1)
+				beforeNonce := (valueVal >> utils.NONCE_OFFSET) & ((1 << 21) - 1)
+				beforeValue := (valueVal >> utils.VAL_OFFSET) & ((1 << 21) - 1)
 				
-		// 		// Calculate after state
-		// 		afterAddress := beforeAddress
-		// 		if addressChange > 0 {
-		// 			afterAddress = addressChange
-		// 		}
-		// 		afterNonce := beforeNonce + nonceChange
-		// 		afterValue := beforeValue + valueChange
+				// Calculate after state
+				afterAddress := beforeAddress
+				if addressChange > 0 {
+					afterAddress = addressChange
+				}
+				afterNonce := beforeNonce + nonceChange
+				afterValue := beforeValue + valueChange
 				
-		// 		fmt.Printf("    Transaction #%d:\n", txIndex)
-		// 		fmt.Printf("      - Before Transaction: Address=%d, Nonce=%d, Value=%d\n",
-		// 			beforeAddress, beforeNonce, beforeValue)
-		// 		fmt.Printf("      - Changes Applied: Nonce +%d, Value +%d\n",
-		// 			nonceChange, valueChange)
-		// 		fmt.Printf("      - After Transaction: Address=%d, Nonce=%d, Value=%d\n", 
-		// 			afterAddress, afterNonce, afterValue)
-		// 	}
-		// }
+				fmt.Printf("    Transaction #%d:\n", txIndex)
+				fmt.Printf("      - Before Transaction: Address=%d, Nonce=%d, Value=%d\n",
+					beforeAddress, beforeNonce, beforeValue)
+				fmt.Printf("      - Changes Applied: Nonce +%d, Value +%d\n",
+					nonceChange, valueChange)
+				fmt.Printf("      - After Transaction: Address=%d, Nonce=%d, Value=%d\n", 
+					afterAddress, afterNonce, afterValue)
+			}
+		}
 		
 		// Check if this is a snapshot round
 		if (i + 1) % utils.SLICING_INTERVAL == 0 {
@@ -226,7 +227,7 @@ func main() {
 
 	switch algorithmChoice {
 	case 1:
-		algorithm1(&vcs, snapshots, txnData, uint8(stateVecLevel))
+		algorithm1.StateReconstruct(&vcs, snapshots, txnData, uint8(stateVecLevel))
 	case 2:
 		algorithm2.RunAlgorithm2(&vcs, snapshots, txnData, uint8(stateVecLevel))
 	}
@@ -248,64 +249,4 @@ func getProofs(vcs *vc.VCS, stateSize uint64) [][]mcl.G1 {
 		proofs[i] = vcs.GetProofPath(i)
 	}
 	return proofs
-}
-
-func algorithm1(vcs *vc.VCS, slices []*utils.Slice, txnData []utils.StateInfo, stateVecLevel uint8) {
-	// start of prover
-	fmt.Println(vc.SEP)
-	fmt.Print("Start of Algorithm 1")
-	fmt.Println(vc.SEP)
-
-	fmt.Println("\n=== State Recovery Test ===")
-	fmt.Print("Enter state index to reconstruct (0-based): ")
-	var targetState uint64
-	fmt.Scanf("%d", &targetState)
-
-	closestSlice, sliceIndex := utils.FindCLoestSlice(vcs, slices, targetState)
-
-	// Get transaction data from the cloest slice to the target state
-	fmt.Printf("\nGetting transaction data from state %d to state %d...\n", sliceIndex, targetState)
-		
-	if sliceIndex != targetState {
-		for i := sliceIndex + 1; i <= targetState; i++ {
-			fmt.Println("apply transaction from state", i)
-			transactionList := txnData[i]
-			utils.UpdateAccount(vcs, closestSlice.State, transactionList.IndexVec, transactionList.DeltaVec, int(i+1))
-		}
-	}
-
-	// Generate commitment for the recovered state
-	vcs.OpenAll(closestSlice.State)
-	// TODO: Adding a for loop for the prove tree
-	recoveredCommitment := vcs.Commit(closestSlice.State, uint64(stateVecLevel))
-	// End of prover
-	
-	// Start of verifier
-	// Compare with original commitment
-	originalCommitment := txnData[targetState].Commitment
-	
-	// Compare commitments
-	if recoveredCommitment.IsEqual(&originalCommitment) {
-		fmt.Println("\nCommitment verification: SUCCESS - Recovered state matches original state")
-	} else {
-		fmt.Println("\nCommitment verification: FAILED - Recovered state differs from original state")
-	}
-
-	// Print the recovered state
-	fmt.Printf("\nRecovered State at Round %d:\n", targetState)
-	fmt.Println(strings.Repeat("-", 80))
-	for i := uint64(0); i < vcs.N; i++ {
-		addr := closestSlice.ExtractField(i, utils.ADDR_OFFSET)
-		nonce := closestSlice.ExtractField(i, utils.NONCE_OFFSET)
-		value := closestSlice.ExtractField(i, utils.VAL_OFFSET)
-		
-		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n", 
-			i, addr, nonce, value)
-	}
-	fmt.Println(strings.Repeat("-", 80))
-
-	fmt.Println(vc.SEP)
-	fmt.Print("End of Algorithm 1")
-	fmt.Println(vc.SEP)
-	// End of verifier
 }

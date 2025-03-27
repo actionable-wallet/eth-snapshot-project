@@ -10,22 +10,6 @@ import (
 	vc "github.com/hyperproofs/hyperproofs-go/vcs"
 )
 
-// Transaction field offsets for bit manipulation
-const (
-	addressOffset    int64 = 43 	// 21 bits for address
-	nonceFieldOffset int64 = 22 	// 21 bits for nonce
-	valueOffset     int64 = 1   	// 21 bits for value
-	paddingBits     int64 = 0x0 	// 1 bit for padding
-)
-
-// TransactionRecord represents a single transaction in the system
-type TransactionRecord struct {
-	StateIndex        int    	// The round number when this transaction occurred
-	AccountIndex uint64 	// The account that this transaction belongs to
-	ValueDelta   int    	// The change in value (can be positive or negative)
-	Nonce        int64  	// Transaction sequence number for the account
-}
-
 // GenerateTransactionVectors generates vectors for transaction simulation.
 // This function only generates the vectors without updating any state.
 // Returns:
@@ -56,10 +40,10 @@ func GenerateTransactionVectors(vcs *vc.VCS, aFr []mcl.Fr, transactionNum uint64
 		valDelta := r.Intn(1000)
 
 		// Pack the changes into deltaVec
-		addressChange := int64(0) << addressOffset
-		incrementNonce := int64(1) << nonceFieldOffset
-		valueChange := int64(valDelta) << valueOffset
-		delta := addressChange | incrementNonce | valueChange | paddingBits
+		addressChange := int64(0) << int64(ADDR_OFFSET)
+		incrementNonce := int64(1) << int64(NONCE_OFFSET)
+		valueChange := int64(valDelta) << int64(VAL_OFFSET)
+		delta := addressChange ^ incrementNonce ^ valueChange ^ int64(PAD_OFFSET)
 		deltaVec[i].SetInt64(delta)
 
 		// Store current value
@@ -82,7 +66,7 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 		
 		// Extract value change from delta
 		delta, _ := strconv.ParseInt(deltaVec[i].GetString(10), 10, 64)
-		valDelta := (delta >> valueOffset) & ((1 << 21) - 1)
+		valDelta := (delta >> int64(VAL_OFFSET)) & ((1 << 21) - 1)
 		
 		// Create transaction record
 		tx := TransactionRecord{
@@ -123,10 +107,68 @@ func UpdateAccount(vcs *vc.VCS, aFr []mcl.Fr, indexVec []uint64, deltaVec []mcl.
 	fmt.Println("\n=== Current Account States ===")
 	for i := uint64(0); i < uint64(len(aFr)); i++ {
 		val, _ := strconv.ParseInt(aFr[i].GetString(10), 10, 64)
-		address := (val >> addressOffset) & ((1 << 21) - 1)
-		nonce := (val >> nonceFieldOffset) & ((1 << 21) - 1)
-		value := (val >> valueOffset) & ((1 << 21) - 1)
+		address := (val >> int64(ADDR_OFFSET)) & ((1 << 21) - 1)
+		nonce := (val >> int64(NONCE_OFFSET)) & ((1 << 21) - 1)
+		value := (val >> int64(VAL_OFFSET)) & ((1 << 21) - 1)
 		fmt.Printf("Account[%d]: Address=%d, Nonce=%d, Value=%d\n",
 			i, address, nonce, value)
 	}
-} 
+}
+
+// This function returns the IndexVec and DeltaVec for the given range of states
+func GetTransactionList(beginIndex uint64, endIndex uint64, txnData []StateInfo) ([]uint64, []mcl.Fr, []mcl.Fr) {
+	fmt.Printf("Getting transactions from state %d to state %d\n", beginIndex, endIndex)
+	
+	// Collect all transactions
+	var allIndexVec []uint64
+	var allDeltaVec []mcl.Fr
+	var allValueVec []mcl.Fr
+	
+	// Map to track the latest state for each account
+	valueMap := make(map[uint64]mcl.Fr)
+	updateMap := make(map[uint64]mcl.Fr)
+	
+	// Process each state in order
+	for i := beginIndex; i <= endIndex; i++ {
+		state := txnData[i]
+		fmt.Printf("Processing state %d with %d transactions\n", i, len(state.IndexVec))
+		
+		// Process each transaction
+		for j := 0; j < len(state.IndexVec); j++ {
+			accountIndex := state.IndexVec[j]
+			delta := state.DeltaVec[j]
+			value := state.ValueVec[j]
+			
+			// If this is the first transaction for this account, record its initial value
+			if _, exists := valueMap[accountIndex]; !exists {
+				valueMap[accountIndex] = value
+			}
+			
+			// Accumulate delta
+			temp := updateMap[accountIndex]
+			mcl.FrAdd(&temp, &temp, &delta)
+			updateMap[accountIndex] = temp
+			
+			allIndexVec = append(allIndexVec, accountIndex)
+			allDeltaVec = append(allDeltaVec, delta)
+		}
+	}
+	
+	// Apply all updates to valueMap
+	for key, delta := range updateMap {
+		temp := valueMap[key]
+		mcl.FrAdd(&temp, &temp, &delta)
+		valueMap[key] = temp
+	}
+	
+	// Build the final valueVec
+	allValueVec = make([]mcl.Fr, len(allIndexVec))
+	for i, index := range allIndexVec {
+		allValueVec[i] = valueMap[index]
+	}
+	
+	fmt.Printf("Total transactions: %d\n", len(allIndexVec))
+	fmt.Printf("Unique accounts: %d\n", len(valueMap))
+	
+	return allIndexVec, allDeltaVec, allValueVec
+}
